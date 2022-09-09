@@ -46,4 +46,8 @@ export class MyCoachingPage {
             status: planDetails[3]
         }
     }
+
+    TODO:
+    //waitForStatusToUpdate
+    //openCoachingSession
 }
