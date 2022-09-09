@@ -14,6 +14,7 @@ import { FeatureToggleUtils } from "../../common/FeatureToggleUtils";
 import { FEATURE_TOGGLES } from "../../common/CONSTANTS";
 import { LocalizationNoUI } from "../../common/LocalizationNoUI";
 import { fdUtils } from "../../common/FdUtils";
+import {MyCoachingPage} from "../../pageObjects/myCoachingPage.po"
 
 
 let myCoachingsPage;
@@ -200,7 +201,7 @@ BeforeAll({}, async () => {
     context = await browser.newContext();
     page = await context.newPage();
     utils = new Utils(page);
-    myCoachingsPage = new MyCoachingsPo();
+    myCoachingsPage = new MyCoachingPage(page);
     coachingPlan = new CoachingPlansPO();
     coachingPackage = new CoachingPackagesPO();
     coachingPlanDetailsPage = new CoachingPlanDetailsPO();
