@@ -13,16 +13,15 @@ import { FeatureToggleUtils } from "../../common/FeatureToggleUtils";
 import { FEATURE_TOGGLES } from "../../common/CONSTANTS";
 import { LocalizationNoUI } from "../../common/LocalizationNoUI";
 import { fdUtils } from "../../common/FdUtils";
-import { CoachingPlanDetailsPage } from "../../pageObjects/coachingPlanDetailsPage.po";
 import { MyCoachingsPo } from "../../pageObjects/myCoachingPage.po";
 import { CoachingPlansPO } from "../../pageObjects/coaching-plans.po";
+import { CoachingPackagesPO } from "../../pageObjects/coaching-package.po";
 
 
 let myCoachingsPage : MyCoachingsPo;
 let coachingPlan:CoachingPlansPO;
-let coachingPackage;
-// let coachingPlanDetailsPage:CoachingPlanDetailsPage;
-let coachingPlanDetailsPage:any;
+let coachingPackage:CoachingPackagesPO;
+let coachingPlanDetailsPage;
 let addUsersModal;
 let notificationMenu;
 let browser: any;
