@@ -16,12 +16,13 @@ import { fdUtils } from "../../common/FdUtils";
 import { MyCoachingsPo } from "../../pageObjects/myCoachingPage.po";
 import { CoachingPlansPO } from "../../pageObjects/coaching-plans.po";
 import { CoachingPackagesPO } from "../../pageObjects/coaching-package.po";
+import { CoachingPlanDetailsPO } from "../../pageObjects/coaching-plan-details.po";
 
 
 let myCoachingsPage : MyCoachingsPo;
 let coachingPlan:CoachingPlansPO;
 let coachingPackage:CoachingPackagesPO;
-let coachingPlanDetailsPage;
+let coachingPlanDetailsPage:CoachingPlanDetailsPO;
 let addUsersModal;
 let notificationMenu;
 let browser: any;
@@ -202,7 +203,7 @@ BeforeAll({}, async () => {
     myCoachingsPage = new MyCoachingsPo(page);
     coachingPlan = new CoachingPlansPO(page);
     coachingPackage = new CoachingPackagesPO();
-    coachingPlanDetailsPage = new CoachingPlanDetailsPage(page);
+    coachingPlanDetailsPage = new CoachingPlanDetailsPO(page);
     addUsersModal = new AddEntityPO(element(page.locators('.cxone-modal-wrapper')));
     notificationMenu = new NotificationMenuPO();
 

@@ -83,4 +83,8 @@ export class MultiSelectDropdownPo {
             await this.elements.caret.click();
         }
     }
+
+    public async selectAllItemsContainTheLabel(arg:any){
+
+    }
 }
