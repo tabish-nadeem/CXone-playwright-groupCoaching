@@ -1,4 +1,4 @@
-import { Given, When, Then, BeforeAll, AfterAll } from "cucumber";
+import { Given, When, Then, BeforeAll } from "cucumber";
 import { BrowserContext, Page, expect, chromium } from "@playwright/test";
 import { GlobalTenantUtils } from "../../common/globalTenantUtils";
 import { AccountUtils } from "../../common/AccountUtils";
@@ -7,21 +7,22 @@ import { CommonQMNoUIUtils } from "../../common/CommonQMNoUIUtils";
 import * as moment from 'moment';
 import { LoginPage } from "../../common/login";
 import {UserDefaultPermissions} from "../../common/userDefaultPermissions";
-import { AdminUtilsNoUI } from "../../common/AdminUtilsNoUI";
 import { Utils } from "../../common/utils";
 import { CommonUIUtils } from "cxone-playwright-test-utils";
 import { FeatureToggleUtils } from "../../common/FeatureToggleUtils";
 import { FEATURE_TOGGLES } from "../../common/CONSTANTS";
 import { LocalizationNoUI } from "../../common/LocalizationNoUI";
 import { fdUtils } from "../../common/FdUtils";
-import {MyCoachingPage} from "../../pageObjects/myCoachingPage.po"
-import { CoachingPlanPage } from "../../pageObjects/coachingPlanPage.po";
+import { CoachingPlanDetailsPage } from "../../pageObjects/coachingPlanDetailsPage.po";
+import { MyCoachingsPo } from "../../pageObjects/myCoachingPage.po";
+import { CoachingPlansPO } from "../../pageObjects/coaching-plans.po";
 
 
-let myCoachingsPage : MyCoachingPage;
-let coachingPlan:CoachingPlanPage;
+let myCoachingsPage : MyCoachingsPo;
+let coachingPlan:CoachingPlansPO;
 let coachingPackage;
-let coachingPlanDetailsPage;
+// let coachingPlanDetailsPage:CoachingPlanDetailsPage;
+let coachingPlanDetailsPage:any;
 let addUsersModal;
 let notificationMenu;
 let browser: any;
@@ -38,7 +39,6 @@ let loginPage:LoginPage;
 let userDefaultPermissions:UserDefaultPermissions;
 let utils:Utils;
 let testDataUsed:any;
-
 
 
 let userDetails = {
@@ -108,7 +108,7 @@ const createCoachingPackageAndPlan = async () => {
             testDataUsed.adminUser['id']
         ]
     };
-    await coachingPlan.navigateToCoachingPlans();
+    await coachingPlan.navigateToCoachingPlanPage();
     await CommonQMNoUIUtils.createCoachingPlan(testDataUsed.coachingPlan,userToken);
     await loginPage.logout();
 };
@@ -128,7 +128,6 @@ const createUsers = async () => {
     await AccountUtils.createAndActivateUser(userDetails.evaluatorUser3.email, userDetails.evaluatorUser3['password'], userDetails.evaluatorUser3, userDetails.adminCreds.email,tenantName,userToken);
 
     console.log('Evaluator User is activated');
-
     res = await CommonNoUIUtils.createNewRoleByPermissions('customManager', 'Custom Manager 1',await userDefaultPermissions.getUserDefaultApplications('manager'),userToken);
     userDetails.managerCreds.role = res.roleName;
     await AccountUtils.createAndActivateUser(userDetails.managerCreds.email, userDetails.managerCreds['password'], userDetails.managerCreds, userDetails.adminCreds.email,tenantName,userToken);
@@ -138,7 +137,7 @@ const createUsers = async () => {
 const submitCoaching = async (email, password, coachingPlanName, actionBtn, statusToVerify) => {
     // await protractorConfig.testUtils.login(email, password, fdUtils.getPageIdentifierUrls('coaching.myCoaching'));
     await loginPage.login(email, password);
-    await myCoachingsPage.navigateToMyCoachingPage();
+    await myCoachingsPage.navigateToMyCoachingsPage();
     
     
     await CommonUIUtils.waitUntillIconLoaderDone(fdUtils.getPageIdentifierUrls('coaching.myCoaching'));
@@ -150,16 +149,15 @@ const submitCoaching = async (email, password, coachingPlanName, actionBtn, stat
     // await coachingPackage.verifyEndToEndCoachingPackage(coachingPlanName); // TODO: QM-9706
     
     await CommonUIUtils.waitUntillIconLoaderDone();
-    await myCoachingsPage.clickOnSubmitButton();
+    await myCoachingsPage.clickSubmitButton();
 
     await utils.delay(10000);
-    let rowEle = await myCoachingsPage.getARow('coachingPlanName', coachingPlanName);
+    let rowEle = await myCoachingsPage.getRowElements('coachingPlanName', coachingPlanName);
     expect(rowEle.status).toEqual(statusToVerify);
     await loginPage.logout();
 };
 
-const waitForPage = async (pageName) => {
-        
+const waitForPage = async (pageName) => {     
     await CommonUIUtils.waitUntillIconLoaderDone(fdUtils.getPageIdentifierUrls(pageName));
 };
 
@@ -202,10 +200,10 @@ BeforeAll({}, async () => {
     context = await browser.newContext();
     page = await context.newPage();
     utils = new Utils(page);
-    myCoachingsPage = new MyCoachingPage(page);
-    coachingPlan = new CoachingPlanPage(page);
+    myCoachingsPage = new MyCoachingsPo(page);
+    coachingPlan = new CoachingPlansPO(page);
     coachingPackage = new CoachingPackagesPO();
-    coachingPlanDetailsPage = new CoachingPlanDetailsPO();
+    coachingPlanDetailsPage = new CoachingPlanDetailsPage(page);
     addUsersModal = new AddEntityPO(element(page.locators('.cxone-modal-wrapper')));
     notificationMenu = new NotificationMenuPO();
 
@@ -223,10 +221,6 @@ BeforeAll({}, async () => {
     console.log('DateTime formats to use', dateFormat);
 
     await createCoachingPackageAndPlan();
-
-
-
-    
 });
 
 
@@ -241,12 +235,12 @@ When("STEP-2: Should verify that the evaluator submit the coaching", { timeout: 
 
 When("STEP-3: Should not display Send Reminder button if new future dated coaching plan is created", { timeout: 60 * 1000 }, async () => {
         await loginPage.login(testDataUsed.adminUser['emailAddress'], testDataUsed.adminUser['password']);
-        await coachingPlan.navigateToCoachingPlans();
+        await coachingPlan.navigateToCoachingPlanPage();
         await CommonUIUtils.waitUntillIconLoaderDone(fdUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-        await coachingPlanDetailsPage.navigateToCreateCoachingPlan();
+        await coachingPlanDetailsPage.navigateToCoachingPlanDetails();
         await coachingPlanDetailsPage.setCoachingPlanName(testDataUsed.scheduledPlanName);
-        await coachingPlanDetailsPage.setPlanStartDate(moment().add(2, 'day').format(dateFormat.shortDateFormat));
-        await coachingPlanDetailsPage.selectCoachingPackage(testDataUsed.coachingPackageName);
+        await coachingPlanDetailsPage.setPlanEndDate(moment().add(2, 'day').format(dateFormat.shortDateFormat));
+        await coachingPlanDetailsPage.setCoachingPlanName(testDataUsed.coachingPackageName);
         // await protractorConfig.fdUtils.waitForLoadingToDisappear();
         await CommonUIUtils.waitForLoadingToDisappear(page);
         await coachingPlanDetailsPage.clickAddUsersButton();
@@ -260,10 +254,11 @@ When("STEP-3: Should not display Send Reminder button if new future dated coachi
         expect(text).toContain('Add Employees');
         await coachingPlanDetailsPage.clickSubmitButton();
         await CommonUIUtils.waitForLoadingToDisappea();
-        await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-        let planRowElements = await coachingPlan.getCoachingPlanRowElement(testDataUsed.scheduledPlanName);
+        // await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+        await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+        let planRowElements = await coachingPlan.getRowElementsByPlanName(testDataUsed.scheduledPlanName);
         expect(planRowElements.status).toBe('Scheduled');
-        await coachingPlan.searchPlan(testDataUsed.scheduledPlanName);
+        await coachingPlan.searchPlanAndOpen(testDataUsed.scheduledPlanName);
         await page.waitForSelector(coachingPlanDetailsPage.getAddEmployeeButton())
         text = await coachingPlanDetailsPage.getAddEmployeeButton().getText();
         expect(text).toContain('Add Employees');
@@ -272,13 +267,13 @@ When("STEP-3: Should not display Send Reminder button if new future dated coachi
 });
 
 Then("STEP-4: Should display Send Reminder button for an Activated plan", { timeout: 60 * 1000 }, async () => {
-    await coachingPlan.navigateToCoachingPlans();
+    await coachingPlan.navigateToCoachingPlanPage();
     await CommonUIUtils.waitForLoadingToDisappear(page);
-    let row = await coachingPlan.getCoachingPlanRowElement(testDataUsed.coachingPlanName);
+    let row = await coachingPlan.getRowElementsByPlanName(testDataUsed.coachingPlanName);
     expect(row.responses).toEqual('2');
-    await coachingPlan.searchPlan(testDataUsed.coachingPlanName);
+    await coachingPlan.searchPlanAndOpen(testDataUsed.coachingPlanName);
     await CommonUIUtils.waitForLoadingToDisappear(page);
-    await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
+    await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
     await coachingPlanDetailsPage.getRowDataByAgentName(testDataUsed.adminUser['firstName'], true);
     let res = await coachingPlanDetailsPage.getSendReminderButton().isPresent();
     expect(res).toBeTruthy();
@@ -287,9 +282,10 @@ Then("STEP-4: Should display Send Reminder button for an Activated plan", { time
     let count = await coachingPlanDetailsPage.getItemCount();
     expect(count).toEqual('3 Total');
 });
+
 Then("STEP-5: Should display Send Reminder button tool-tip", { timeout: 60 * 1000 }, async () => {
     await browser.actions().mouseMove(await coachingPlanDetailsPage.getSendReminderButton()).perform();
-    await protractorConfig.testUtils.waitUntilVisible(await coachingPlanDetailsPage.getToolTipAtSendReminderBtn());
+    await page.waitForSelector(await coachingPlanDetailsPage.getToolTipAtSendReminderBtn());
     let text = await coachingPlanDetailsPage.getToolTipAtSendReminderBtn().getText();
     expect(text).toEqual(fdUtils.getExpectedString('coachingPlanDetails.sendReminderToolTipText'));
 });
@@ -299,22 +295,24 @@ Then("STEP-6: Should verify notification if send reminder button is clicked", { 
     await coachingPlanDetailsPage.clickSendReminderButton();
     let msg = await utils.getToastMessage();
     expect(msg).toEqual(fdUtils.getExpectedString('coachingPlanDetails.succeedToNotifyPlan'));
-    await Utils.waitUntilVisible(await notificationMenu.getBadgeElement());
+    await page.waitForSelector(await notificationMenu.getBadgeElement());
     expect(await notificationMenu.isBadgeDisplayed()).toBeTruthy();
     await page.locator('.badge').click();
-    await protractorConfig.testUtils.waitUntilVisible(page.locator('.notification-popover-wrapper'), 10000);
+    await page.waitForSelector(page.locator('.notification-popover-wrapper'), 10000);
     expect(await page.locator('.notification-item-container').getAttribute('class')).toContain('unread');
 });
+
 Then("STEP-7: Should verify that send reminder button is disabled & will be enabled after refresh", { timeout: 60 * 1000 }, async () => {
     let isEnabled = await fdUtils.isElementEnabled(coachingPlanDetailsPage.getSendReminderButton(),'');
     expect(isEnabled).toBeFalsy();
     await browser.refresh();
     await browser.sleep(5000);
-    await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
+    await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
     await CommonUIUtils.waitForLoadingToDisappear(page);
     isEnabled = await fdUtils.isElementEnabled(coachingPlanDetailsPage.getSendReminderButton(),'');
     expect(isEnabled).toBeTruthy();
 });
+
 Then("STEP-8: Should verify completion status", { timeout: 60 * 1000 }, async () => {
     await coachingPlanDetailsPage.clickFilterButton();
     await coachingPlanDetailsPage.selectStatus(['Completed']);
@@ -336,6 +334,7 @@ Then("STEP-8: Should verify completion status", { timeout: 60 * 1000 }, async ()
     // expect(evaluatorData.role).toEqual('customEvaluator');
     expect(evaluatorData.coachingCompleted).toEqual('Yes');
 });
+
 Then("STEP-9: Should verify not completion status", { timeout: 60 * 1000 }, async () => {
     await coachingPlanDetailsPage.clickFilterButton();
     await coachingPlanDetailsPage.selectStatus(['Not Completed']);
@@ -352,14 +351,15 @@ Then("STEP-9: Should verify not completion status", { timeout: 60 * 1000 }, asyn
     expect(adminUser.coachingCompleted).toEqual('No');
     await coachingPlanDetailsPage.resetFilterOptions();
 });
+
 Then("STEP-10: Should verify status of all completed coachings", { timeout: 60 * 1000 }, async () => {
-    await myCoachingsPage.navigateToMyCoachingPage();
-    await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.myCoaching'));
+    await myCoachingsPage.navigateToMyCoachingsPage();
+    await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.myCoaching'));
     await myCoachingsPage.openCoachingSession(testDataUsed.coachingPlanName);
-    await myCoachingsPage.clickOnSubmitButton();
+    await myCoachingsPage.clickSubmitButton();
     await waitForPage('coaching.myCoaching');
     await myCoachingsPage.waitForStatusToUpdate(testDataUsed.coachingPlanName, 'Completed');
-    await coachingPlan.navigateToCoachingPlans();
+    await coachingPlan.navigateToCoachingPlanPage();
     await CommonUIUtils.waitForLoadingToDisappear(page);
     await coachingPlan.searchPlan(testDataUsed.coachingPlanName);
     await CommonUIUtils.waitForLoadingToDisappear(page);
@@ -367,7 +367,7 @@ Then("STEP-10: Should verify status of all completed coachings", { timeout: 60 *
     await coachingPlanDetailsPage.selectStatus(['Completed']);
     await coachingPlanDetailsPage.clickFilterButton();
     await CommonUIUtils.waitForLoadingToDisappear(page);
-    await protractorConfig.testUtils.waitUntilVisible(await coachingPlanDetailsPage.getStatusTag('Completed'));
+    await page.waitForSelector(await coachingPlanDetailsPage.getStatusTag('Completed'));
     let data = await coachingPlanDetailsPage.getItemCount();
     expect(data).toContain('3 Total');
     await coachingPlanDetailsPage.searchAssignedUsers(testDataUsed.agentUser1['firstName']);
@@ -384,29 +384,32 @@ Then("STEP-10: Should verify status of all completed coachings", { timeout: 60 *
     expect(evaluatorData.coachingCompleted).toEqual('Yes');
     let result = await coachingPlanDetailsPage.getSendReminderButton().isPresent();
     expect(result).toBeTruthy();
-    await coachingPlan.navigateToCoachingPlans();
-    let row = await coachingPlan.getCoachingPlanRowElement(testDataUsed.coachingPlanName);
+    await coachingPlan.navigateToCoachingPlanPage();
+    let row = await coachingPlan.getRowElementsByPlanName(testDataUsed.coachingPlanName);
     expect(row.response).toEqual('3');
     await loginPage.logout();
 });
+
 Then("STEP-11: Should verify that agents who has completed coaching earlier Should not receive new notification", { timeout: 60 * 1000 }, async () => {
     await CommonNoUIUtils.login(testDataUsed.agentUser1['emailAddress'], testDataUsed.agentUser1['password'],true);
-    await myCoachingsPage.navigateToMyCoachingPage();
-    await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.myCoaching'));
-    await Utils.waitUntilVisible(await notificationMenu.getBadgeElement());
+    await myCoachingsPage.navigateToMyCoachingsPage();
+    await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.myCoaching'));
+    await page.waitForSelector(await notificationMenu.getBadgeElement());
     let count = await notificationMenu.getAmountOfUnreadNotifications();
     expect(count).toEqual(1);
     await loginPage.logout();
     await CommonNoUIUtils.login(testDataUsed.evaluatorUser3['emailAddress'], testDataUsed.evaluatorUser3['password'],true);
-    await myCoachingsPage.navigateToMyCoachingPage();
-    await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.myCoaching'));
-    await Utils.waitUntilVisible(await notificationMenu.getBadgeElement());
+    await myCoachingsPage.navigateToMyCoachingsPage();
+    await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.myCoaching'));
+    await page.waitForSelector(await notificationMenu.getBadgeElement());
     count = await notificationMenu.getAmountOfUnreadNotifications();
     expect(count).toEqual(1);
 });
+
+
 Then("STEP-12: Should check the title and the content of the last arrived notification and mark as read", { timeout: 60 * 1000 }, async () => {
     await page.locator('.badge').click();
-    await protractorConfig.testUtils.waitUntilVisible(page.locator('.notification-popover-wrapper'), 10000);
+    await page.waitForSelector(page.locator('.notification-popover-wrapper'), 10000);
     expect(await page.locator('.notification-item-container').getAttribute('class')).toContain('unread');
     expect(await page.locator('.notificationItemTitle').first().getText()).toEqual('New coaching package available');
     expect(await page.locator('.notificationItemDescription').first().getText()).toEqual('Your action is required');
@@ -416,10 +419,12 @@ Then("STEP-12: Should check the title and the content of the last arrived notifi
     expect(url).toContain('/myCoachings');
     await loginPage.logout();
 });
+
+
 Then("STEP-13: Should search 1 user who has completed coaching", { timeout: 60 * 1000 }, async () => {
     await CommonNoUIUtils.login(testDataUsed.adminUser['emailAddress'], testDataUsed.adminUser['password'],true);
-    await coachingPlan.navigateToCoachingPlans();
-    await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+    await coachingPlan.navigateToCoachingPlanPage();
+    await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlans'));
     await coachingPlan.openSavedPlan(testDataUsed.coachingPlanName);
     await coachingPlanDetailsPage.searchAssignedUsers(testDataUsed.agentUser1['firstName']);
     let agentData = await coachingPlanDetailsPage.getRowDataByAgentName(testDataUsed.agentUser1['firstName'], true);
