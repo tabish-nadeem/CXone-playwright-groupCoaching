@@ -18,6 +18,7 @@ import { CoachingPlansPO } from "../../pageObjects/coaching-plans.po";
 import { CoachingPackagesPO } from "../../pageObjects/coaching-package.po";
 import { CoachingPlanDetailsPO } from "../../pageObjects/coaching-plan-details.po";
 import { AddEntityPO } from "../../pageObjects/add-entity.po";
+import { NotificationMenuPO } from "../../pageObjects/notification-menu.po";
 
 
 let myCoachingsPage : MyCoachingsPo;
@@ -25,7 +26,7 @@ let coachingPlan:CoachingPlansPO;
 let coachingPackage:CoachingPackagesPO;
 let coachingPlanDetailsPage:CoachingPlanDetailsPO;
 let addUsersModal:AddEntityPO;
-let notificationMenu;
+let notificationMenu:NotificationMenuPO;
 let browser: any;
 let context: BrowserContext;
 let page:Page;
