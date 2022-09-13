@@ -1,4 +1,4 @@
-import { Given, When, Then, BeforeAll } from "cucumber";
+import { Given, When, Then, BeforeAll, AfterAll } from "cucumber";
 import { BrowserContext, Page, expect, chromium } from "@playwright/test";
 import { GlobalTenantUtils } from "../../common/globalTenantUtils";
 import { AccountUtils } from "../../common/AccountUtils";
@@ -17,13 +17,14 @@ import { MyCoachingsPo } from "../../pageObjects/myCoachingPage.po";
 import { CoachingPlansPO } from "../../pageObjects/coaching-plans.po";
 import { CoachingPackagesPO } from "../../pageObjects/coaching-package.po";
 import { CoachingPlanDetailsPO } from "../../pageObjects/coaching-plan-details.po";
+import { AddEntityPO } from "../../pageObjects/add-entity.po";
 
 
 let myCoachingsPage : MyCoachingsPo;
 let coachingPlan:CoachingPlansPO;
 let coachingPackage:CoachingPackagesPO;
 let coachingPlanDetailsPage:CoachingPlanDetailsPO;
-let addUsersModal;
+let addUsersModal:AddEntityPO;
 let notificationMenu;
 let browser: any;
 let context: BrowserContext;
@@ -192,7 +193,7 @@ const getUserDetails = async () => {
     });
 };
 
-BeforeAll({}, async () => {
+BeforeAll({ timeout: 400 * 1000}, async () => {
     browser = await chromium.launch({
         headless: false,
         args: ['--window-position=-8,0']
@@ -222,6 +223,11 @@ BeforeAll({}, async () => {
 
     await createCoachingPackageAndPlan();
 });
+
+AfterAll({ timeout: 400 * 1000}, async () =>{
+    await FeatureToggleUtils.removeTenantFromFeature(FEATURE_TOGGLES.ANGULAR8_MIGRATION_FALL21, userDetails.orgName, userToken);
+    await loginPage.logout();
+})
 
 
 Given("STEP-1: Should verify that the agent submit the coaching",{ timeout: 60 * 1000 }, async () => {
@@ -386,7 +392,7 @@ Then("STEP-10: Should verify status of all completed coachings", { timeout: 60 *
     expect(result).toBeTruthy();
     await coachingPlan.navigateToCoachingPlanPage();
     let row = await coachingPlan.getRowElementsByPlanName(testDataUsed.coachingPlanName);
-    expect(row.response).toEqual('3');
+    expect(row.responses).toEqual('3');
     await loginPage.logout();
 });
 
