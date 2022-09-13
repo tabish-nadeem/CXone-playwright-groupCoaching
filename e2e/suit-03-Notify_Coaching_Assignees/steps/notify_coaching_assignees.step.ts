@@ -206,7 +206,7 @@ BeforeAll({ timeout: 400 * 1000}, async () => {
     coachingPlan = new CoachingPlansPO(page);
     coachingPackage = new CoachingPackagesPO();
     coachingPlanDetailsPage = new CoachingPlanDetailsPO(page);
-    addUsersModal = new AddEntityPO(element(page.locators('.cxone-modal-wrapper')));
+    addUsersModal = new AddEntityPO(page.locators('.cxone-modal-wrapper'));
     notificationMenu = new NotificationMenuPO();
 
     globalDetails = globalTenantUtils.getDefaultTenantCredentials();
@@ -244,10 +244,10 @@ When("STEP-3: Should not display Send Reminder button if new future dated coachi
         await loginPage.login(testDataUsed.adminUser['emailAddress'], testDataUsed.adminUser['password']);
         await coachingPlan.navigateToCoachingPlanPage();
         await CommonUIUtils.waitUntillIconLoaderDone(fdUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-        await coachingPlanDetailsPage.navigateToCoachingPlanDetails();
+        await coachingPlanDetailsPage.navigateToCreateCoachingPlan();
         await coachingPlanDetailsPage.setCoachingPlanName(testDataUsed.scheduledPlanName);
-        await coachingPlanDetailsPage.setPlanEndDate(moment().add(2, 'day').format(dateFormat.shortDateFormat));
-        await coachingPlanDetailsPage.setCoachingPlanName(testDataUsed.coachingPackageName);
+        await coachingPlanDetailsPage.setPlanStartDate(moment().add(2, 'day').format(dateFormat.shortDateFormat));
+        await coachingPlanDetailsPage.selectCoachingPackage(testDataUsed.coachingPackageName);
         // await protractorConfig.fdUtils.waitForLoadingToDisappear();
         await CommonUIUtils.waitForLoadingToDisappear(page);
         await coachingPlanDetailsPage.clickAddUsersButton();
@@ -368,7 +368,7 @@ Then("STEP-10: Should verify status of all completed coachings", { timeout: 60 *
     await myCoachingsPage.waitForStatusToUpdate(testDataUsed.coachingPlanName, 'Completed');
     await coachingPlan.navigateToCoachingPlanPage();
     await CommonUIUtils.waitForLoadingToDisappear(page);
-    await coachingPlan.searchPlan(testDataUsed.coachingPlanName);
+    await coachingPlan.searchPlanAndOpen(testDataUsed.coachingPlanName);
     await CommonUIUtils.waitForLoadingToDisappear(page);
     await coachingPlanDetailsPage.clickFilterButton();
     await coachingPlanDetailsPage.selectStatus(['Completed']);

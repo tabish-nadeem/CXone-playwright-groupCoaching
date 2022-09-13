@@ -1,5 +1,6 @@
 import {Page,Locator,expect} from '@playwright/test';
 import { fdUtils } from '../common/FdUtils';
+import { UIConstants } from '../common/uiConstants';
 import { Utils } from '../common/utils';
 import { CoachingGridPO } from './coaching-grid.po';
 import { MultiSelectDropdownPo } from './multiselect-Dropdown.po';
@@ -14,9 +15,11 @@ export class CoachingPlanDetailsPO {
     public gridPO: CoachingGridPO;
     public page:Page;
     public utils:Utils;
+    public uiConstants:UIConstants;
     public constructor(pageElement?: Locator, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page.locator = pageElement || this.page.locator('body');
+        this.uiConstants = new UIConstants();
         this.gridPO = new CoachingGridPO(this.page.locator('#coaching-plan-details-grid-container')));
         this.filterDropdown = new MultiSelectDropdownPo('filter-dropdown');
         this.coachingPackageDropdown = new SingleselectDropdownPO('coaching-package-filter');
@@ -105,7 +108,7 @@ export class CoachingPlanDetailsPO {
     }
 
     public async navigateToCreateCoachingPlan() {
-        await this.page.goto(protractor.baseApiUrl + fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
+        await this.page.goto(this.uiConstants.URLS.LOCALHOST + fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
         await this.page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
         await this.page.waitForSelector(this.elements.coachingPlanContainer,10000);
     }

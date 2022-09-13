@@ -1,6 +1,8 @@
 import {Page,Locator,expect} from '@playwright/test';
 import { CommonUIUtils } from "cxone-playwright-test-utils";
 import { fdUtils } from '../common/FdUtils';
+import { URLs } from '../common/pageIdentifierURLs';
+import { UIConstants } from '../common/uiConstants';
 import { Utils } from '../common/utils';
 import { CoachingGridPO } from './coaching-grid.po';
 
@@ -10,12 +12,14 @@ export class MyCoachingsPo {
     public elements;
     public page:Page;
     public utils:Utils;
+    public uiConstants:UIConstants;
     public gridPO: CoachingGridPO;
 
     public constructor(pageElement?: Locator,defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page.locator = pageElement || this.page.locator('body');
         this.gridPO = new CoachingGridPO(this.page.locator('#my-coaching-grid-container'));
+        this.uiConstants = new UIConstants();
         this.elements = {
             coachingPlanContainer: this.page.locator('.my-coaching-page'),
             pageTitle: this.page.locator('#my-coaching-page-title'),
@@ -60,7 +64,7 @@ export class MyCoachingsPo {
         let count = 0;
         // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
         // await browser.wait(async function () {
-        await browser.wait(async () => {
+        await this.page.wait(async () => {
             count = count + 1;
             // await browser.refresh();
             await this.utils.delay(20000);
@@ -70,16 +74,24 @@ export class MyCoachingsPo {
     }
 
     public async navigateToMyCoachingsPage() {
-        await this.navigateTo();
+        await this.navigate();
     }
 
-    public async navigateTo(quickly?: boolean) {
-        if (quickly) {
-            return await navigateQuicklyTo(protractorConfig.fdUtils.getPageIdentifierUrls('coaching.myCoaching'), this.ancestor);
-        } else {
-            return await navigateTo(protractorConfig.fdUtils.getPageIdentifierUrls('coaching.myCoaching'), this.ancestor);
-        }
+    public async navigate(){
+        let baseUrl = this.uiConstants.URLS.LOCALHOST
+        // await this.page.goto(baseUrl + URLs);
+        // await this.page.waitForURL('**\/#/manageForms');
+        // await CommonUIUtils.waitUntilIconLoaderDone(this.page);
+        // await this.page.waitForSelector(`#ng2-manage-forms-page`);
     }
+
+    // public async navigateTo(quickly?: boolean) {
+    //     if (quickly) {
+    //         return await navigateQuicklyTo(protractorConfig.fdUtils.getPageIdentifierUrls('coaching.myCoaching'), this.ancestor);
+    //     } else {
+    //         return await navigateTo(protractorConfig.fdUtils.getPageIdentifierUrls('coaching.myCoaching'), this.ancestor);
+    //     }
+    // }
 
     public async waitForMyCoachingsPage () {
         await expect(this.elements.coachingPlanContainer).toBeVisible(60000);
