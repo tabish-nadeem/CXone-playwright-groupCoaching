@@ -1,6 +1,6 @@
 import {Page,Locator} from '@playwright/test';
 import { Utils } from '../common/utils';
-import { MultiSelectDropdownPo } from './multiselectDropdown.po';
+import { MultiSelectDropdownPo } from './multiselect-Dropdown.po';
 
 export class AddEntityPO {
   public elements: any;

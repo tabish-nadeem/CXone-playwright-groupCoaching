@@ -2,7 +2,7 @@ import {Page,Locator,expect} from '@playwright/test';
 import { fdUtils } from '../common/FdUtils';
 import { Utils } from '../common/utils';
 import { CoachingGridPO } from './coaching-grid.po';
-import { MultiSelectDropdownPo } from './multiselectDropdown.po';
+import { MultiSelectDropdownPo } from './multiselect-Dropdown.po';
 import { SingleselectDropdownPO } from './singleselect-dropdown.po';
 
 export class CoachingPlanDetailsPO {

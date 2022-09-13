@@ -13,7 +13,7 @@ import { FeatureToggleUtils } from "../../common/FeatureToggleUtils";
 import { FEATURE_TOGGLES } from "../../common/CONSTANTS";
 import { LocalizationNoUI } from "../../common/LocalizationNoUI";
 import { fdUtils } from "../../common/FdUtils";
-import { MyCoachingsPo } from "../../pageObjects/myCoachingPage.po";
+import { MyCoachingsPo } from "../../pageObjects/my-Coaching-Page.po";
 import { CoachingPlansPO } from "../../pageObjects/coaching-plans.po";
 import { CoachingPackagesPO } from "../../pageObjects/coaching-package.po";
 import { CoachingPlanDetailsPO } from "../../pageObjects/coaching-plan-details.po";
