@@ -35,41 +35,6 @@ export class CoachingPlansPO {
         await this.page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlans'));
         await this.page.waitForSelector(this.elements.coachingPlanContainer, 20000);
     }
-    // Function to get the coaching plans page header title
-    public async getHeaderText() {
-        await this.page.waitForSelector(this.elements.coachingPlansHeader);
-        return await this.elements.coachingPlansHeader.getText();
-    }
-    // Function to get the plan name column header
-    public async getCoachingPlanNameColumnHeader() {
-        await this.page.waitForSelector(this.elements.coachingPlanNameHeaderColumn);
-        return await this.elements.coachingPlanNameHeaderColumn.getText();
-    }
-    // Function to get the remaining days column header
-    public async getRemainingDaysColumnHeader() {
-        await this.page.waitForSelector(this.elements.remainingDaysHeaderColumn);
-        return await this.elements.remainingDaysHeaderColumn.getText();
-    }
-    // Function to get the employees column header
-    public async getNoOfEmpColumnHeader() {
-        await this.page.waitForSelector(this.elements.noOfEmployeesHeaderColumn);
-        return await this.elements.noOfEmployeesHeaderColumn.getText();
-    }
-    // Function to get the plan status column header
-    public async getPlanStatusColumnHeader() {
-        await this.page.waitForSelector(this.elements.planStatusHeaderColumn);
-        return await this.elements.planStatusHeaderColumn.getText();
-    }
-    // Function to get the responses column header
-    public async getPerOfResponsesColumnHeader() {
-        await this.page.waitForSelector(this.elements.responsesHeaderColumn);
-        return await this.elements.responsesHeaderColumn.getText();
-    }
-    // Function to get the actions column header
-    public async getActionsColumnHeader() {
-        await this.page.waitForSelector(this.elements.actionsHeaderColumn);
-        return await this.elements.actionsHeaderColumn.getText();
-    }
 
     //Function to open saved plan
     public async openSavedPlan(planName) {
@@ -77,11 +42,6 @@ export class CoachingPlansPO {
         await this.elements.planRow(planName).click();
         await this.page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
         await this.page.waitForSelector(this.elements.coachingPlanDetailsGrid, 30000);
-    }
-
-    //Function to check plan presence on grid
-    public async isPlanPresentInGrid (planName) {
-        return await this.elements.planRow(planName).isPresent();
     }
 
     //Function to get particular Coaching plan row
@@ -97,29 +57,6 @@ export class CoachingPlansPO {
         };
     }
 
-    //Function to verify No rows overlay text
-    public async verifyNoRowsOverlayText() {
-        await this.page.waitForSelector(this.elements.noRowsOverlayText);
-        return await this.elements.noRowsOverlayText.getText();
-    }
-
-    public verifyCoachingPlanIsDisplayed(planName) {
-        return this.elements.planRow(planName).isDisplayed();
-    }
-
-    /************************* GRID PLAN DELETE ICON FUNCTIONS ***********************/
-
-    //function to click on delete icon of plan grid
-    public async clickSingleDelete(value) {
-        let dlt = (await this.getRowElementsByPlanName(value)).delete;
-        await protractorConfig.testUtils.waitForItemToBeClickable(dlt);
-        await dlt.click();
-    }
-
-    public async clickNewCoachingPlanButton() {
-        await protractorConfig.testUtils.waitForItemToBeClickable(this.elements.newCoachingPlanBtn);
-        await this.elements.newCoachingPlanBtn.click();
-    }
 
     public async searchPlanAndOpen(planName) {
         await this.page.waitForSelector(this.elements.searchPlan);
