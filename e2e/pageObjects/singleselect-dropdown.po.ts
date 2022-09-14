@@ -50,7 +50,6 @@ export class SingleselectDropdownPO {
     async hasScrollSideBarToClick(elem) {
         let webElem = await elem.getWebElement();
         await this.page.evaluate('arguments[0].scrollIntoView()', webElem); // if no scrollbar this just stays
-        //FIXME:
         await ExpectedConditions.elementToBeClickable(elem);
         await elem.click();
     }

@@ -164,7 +164,7 @@ const waitForPage = async (pageName) => {
 };
 
 
-const getUserDetails = async () => {
+const getUserDetails = async (userToken:any) => {
     let users = await CommonNoUIUtils.getUsers(userToken);
     users.forEach((item:any) => {
         switch (item['emailAddress']) {
@@ -218,7 +218,7 @@ BeforeAll({ timeout: 400 * 1000}, async () => {
     tenantName = userDetails.orgName;
     await CommonUIUtils.waitUntillIconLoaderDone(fdUtils.getPageIdentifierUrls('admin.employees'));
     await createUsers();
-    await getUserDetails();
+    await getUserDetails(userToken);
     dateFormat = await LocalizationNoUI.getDateStringFormat(localeString);
     console.log('DateTime formats to use', dateFormat);
 

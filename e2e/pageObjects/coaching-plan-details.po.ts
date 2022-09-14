@@ -20,7 +20,7 @@ export class CoachingPlanDetailsPO {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page.locator = pageElement || this.page.locator('body');
         this.uiConstants = new UIConstants();
-        this.gridPO = new CoachingGridPO(this.page.locator('#coaching-plan-details-grid-container')));
+        this.gridPO = new CoachingGridPO(this.page.locator('#coaching-plan-details-grid-container'));
         this.filterDropdown = new MultiSelectDropdownPo('filter-dropdown');
         this.coachingPackageDropdown = new SingleselectDropdownPO('coaching-package-filter');
         this.elements = {
@@ -100,7 +100,7 @@ export class CoachingPlanDetailsPO {
     public async getToolTip(elem) {
         await this.page.mouse.move(elem);
         await this.page.waitForSelector(this.elements.toolTip);
-        return await this.elements.toolTip.getText();
+        return await this.elements.toolTip.textContent();
     }
 
     public async getTags(tagName) {
@@ -115,12 +115,12 @@ export class CoachingPlanDetailsPO {
 
     public async getBreadCrumbText() {
         await this.page.waitForSelector(this.elements.breadCrumb);
-        return await this.elements.breadCrumb.getText();
+        return await this.elements.breadCrumb.textContent();
     }
 
     public async getPageTitle() {
         await this.page.waitForSelector(this.elements.pageTitle);
-        return await this.elements.pageTitle.getText();
+        return await this.elements.pageTitle.textContent();
     }
 
     public async clickCancelButton() {
@@ -140,7 +140,7 @@ export class CoachingPlanDetailsPO {
 
     public async getPlanNameHeading() {
         await this.page.waitForSelector(this.elements.planNameInputField);
-        return await this.elements.planNameHeading.getText();
+        return await this.elements.planNameHeading.textContent();
     }
 
     public async setCoachingPlanName(text) {
@@ -150,7 +150,7 @@ export class CoachingPlanDetailsPO {
 
     public async getSelectCoachingPackageHeading() {
         await this.page.waitForSelector(this.elements.selectCoachingPackageHeading);
-        return await this.elements.selectCoachingPackageHeading.getText();
+        return await this.elements.selectCoachingPackageHeading.textContent();
     }
 
     public async selectCoachingPackage(packageName) {
@@ -160,7 +160,7 @@ export class CoachingPlanDetailsPO {
 
     public async getStartDateHeading() {
         await this.page.waitForSelector(this.elements.startDateHeading);
-        return await this.elements.startDateHeading.getText();
+        return await this.elements.startDateHeading.textContent();
     }
 
     public async setStartDate(dateText) {
@@ -170,7 +170,7 @@ export class CoachingPlanDetailsPO {
 
     public async getEndDateHeading() {
         await this.page.waitForSelector(this.elements.endDateHeading);
-        return await this.elements.endDateHeading.getText();
+        return await this.elements.endDateHeading.textContent();
     }
 
     // public async setStartDate(dateText) {
@@ -180,7 +180,7 @@ export class CoachingPlanDetailsPO {
 
     public async getNoEmployeeAssignMsg() {
         await this.page.waitForSelector(this.elements.noEmployeesErr);
-        return await this.elements.noEmployeesErr.getText();
+        return await this.elements.noEmployeesErr.textContent();
     }
 
     public async clickAddEmployeesButton() {
@@ -268,7 +268,7 @@ export class CoachingPlanDetailsPO {
 
     public async getTotalUserCount() {
         await this.page.waitForSelector(this.elements.userCountLbl);
-        return await this.elements.userCountLbl.getText();
+        return await this.elements.userCountLbl.textContent();
     }
 
     public getAllUserCards() {
@@ -332,12 +332,12 @@ export class CoachingPlanDetailsPO {
         const row = await this.gridPO.getRowByColumnText('employeeName', employeeName);
         await this.page.waitForSelector(row, 30000);
         return {
-            employeeName: await row.this.page.locator('[col-id="employeeName"]').getText(),
-            team: await row.this.page.locator('[col-id="team"]').getText(),
-            groups: await row.this.page.locator('[col-id="groups"]').getText(),
-            role: await row.this.page.locator('[col-id="role"]').getText(),
-            status: await row.this.page.locator('[col-id="scheduleStatus"]').getText(),
-            coachingCompleted: isCoachingCompleted ? await row.this.page.locator('[col-id="coachingCompleted"]').getText() : undefined,
+            employeeName: await row.this.page.locator('[col-id="employeeName"]').textContent(),
+            team: await row.this.page.locator('[col-id="team"]').textContent(),
+            groups: await row.this.page.locator('[col-id="groups"]').textContent(),
+            role: await row.this.page.locator('[col-id="role"]').textContent(),
+            status: await row.this.page.locator('[col-id="scheduleStatus"]').textContent(),
+            coachingCompleted: isCoachingCompleted ? await row.this.page.locator('[col-id="coachingCompleted"]').textContent() : undefined,
             lockIcon: await row.this.page.locator('.icon-newlock')
         };
     }
@@ -427,7 +427,7 @@ export class CoachingPlanDetailsPO {
     }
 
     public getItemCount() {
-        return this.elements.totalCount.getText();
+        return this.elements.totalCount.textContent();
     }
 
     public async clearSchedulingOptions() {
