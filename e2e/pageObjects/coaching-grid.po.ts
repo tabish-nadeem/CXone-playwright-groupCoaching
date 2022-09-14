@@ -9,17 +9,6 @@ export class CoachingGridPO {
         return this.locator('.ag-center-cols-viewport .ag-row');
     }
 
-    public getRowByRowIndex(rowIndex: number) {
-        return this.locator(`.ag-center-cols-viewport .ag-row[row-index=${rowIndex}]`);
-    }
-
-    public getRowByText(text: string) {
-        return this.locator(`.ag-center-cols-viewport .ag-row >> ${text}`);
-    }
-
-    public async getTotalRowCount() {
-        return await this.getAllRows().count();
-    }
 
     public async getRowByColumnText(columnId: string, text: string): Promise<Locator> {
         const allRows = await this.getAllRows();
