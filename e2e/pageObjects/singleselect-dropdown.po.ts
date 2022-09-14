@@ -7,7 +7,7 @@ export class SingleselectDropdownPO {
 
     constructor(private dropdownElement?: Locator) {
         if (!this.dropdownElement) {
-            this.anscestor = this.page.locator('cxone-singleselect-dropdown .cxone-singleselect-dropdown'));
+            this.anscestor = this.page.locator('cxone-singleselect-dropdown .cxone-singleselect-dropdown');
         } else {
             this.anscestor = dropdownElement;
         }
@@ -18,10 +18,7 @@ export class SingleselectDropdownPO {
         //return $(this.selector + ' .dropdown-button').click() as Promise<any>;
     }
 
-    getPlaceholder() {
-        return this.anscestor.locator('.button-text').click() as Promise<any>;
-        //return $(this.selector + ' .button-text').getText() as Promise<string>;
-    }
+
 
     async isOpen() {
         return this.anscestor.locator('.icon-carat.dropdown-open').click() as Promise<any>;
@@ -37,15 +34,6 @@ export class SingleselectDropdownPO {
         }
     }
 
-    close() {
-        return this.isOpen().then(isOpen => {
-            if (isOpen) {
-                return this.toggle();
-            } else {
-                return;
-            }
-        });
-    }
 
     async hasScrollSideBarToClick(elem) {
         let webElem = await elem.getWebElement();
@@ -60,45 +48,9 @@ export class SingleselectDropdownPO {
         await this.hasScrollSideBarToClick(elems[0]);
     }
 
-    async selectItem(itemLabel: string) {
-        await this.page.wait(async () => {
-            return await this.anscestor.element('.item-row').isDisplayed();
-        });
-        await this.searchItem(itemLabel);
+   
 
-        await this.page.wait(async () => {
-            return await this.anscestor.element('.item-row').getText() === itemLabel;
-            //return await $(this.selector + ' .item-row').getText() === itemLabel;
-        });
-        return await this.anscestor.element('.options-wrapper .item-row').click();
-        //return $(this.selector + ' .options-wrapper .item-row').click();
-    }
+   
 
-    async searchItem(query) {
-        await this.anscestor.element('.search-wrapper .cxone-text-input input[type="text"]').clear();
-        //await $(this.selector + ' .search-wrapper .cxone-text-input input[type="text"]').clear();
-        return await this.anscestor.element('.search-wrapper .cxone-text-input input[type="text"]').sendKeys(query);
-        //await $(this.selector + ' .search-wrapper .cxone-text-input input[type="text"]').sendKeys(query);
-    }
-
-    getTotalRecordCount() {
-        return this.anscestor.element('.count-display .total-count').getText() as Promise<any>;
-        //return $(this.selector + ' .count-display .total-count').getText() as Promise<any>;
-    }
-
-    isDisabledSet() {
-        return this.anscestor.element('.dropdown-button.disabled').isPresent() as Promise<any>;
-        //return $(this.selector + '.dropdown-button.disabled').isPresent() as Promise<any>;
-    }
-
-    isRequiredSet() {
-        return this.anscestor.element('.dropdown-button.required').isPresent() as Promise<any>;
-        //return $(this.selector + '.dropdown-button.required').isPresent() as Promise<any>;
-    }
-
-    clearSearchQuery() {
-        return this.anscestor.element('.search-wrapper i.icon-close').click() as Promise<any>;
-        //return $(this.selector + ' .search-wrapper i.icon-close').click() as Promise<any>;
-    }
 
 }
