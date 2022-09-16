@@ -1,7 +1,7 @@
 import {Page,Locator} from '@playwright/test';
 import { fdUtils } from '../common/FdUtils';
 import { Utils } from '../common/utils';
-import { CoachingGridPO } from './coaching-grid.po';
+import { CoachingGridPO } from './CoachingGridPO';
 
 export class CoachingPackagesPO {
     public defaultTimeoutInMillis: number;

@@ -13,12 +13,12 @@ import { FeatureToggleUtils } from "../../common/FeatureToggleUtils";
 import { FEATURE_TOGGLES } from "../../common/CONSTANTS";
 import { LocalizationNoUI } from "../../common/LocalizationNoUI";
 import { fdUtils } from "../../common/FdUtils";
-import { MyCoachingsPo } from "../../pageObjects/my-Coaching-Page.po";
-import { CoachingPlansPO } from "../../pageObjects/coaching-plans.po";
-import { CoachingPackagesPO } from "../../pageObjects/coaching-package.po";
-import { CoachingPlanDetailsPO } from "../../pageObjects/coaching-plan-details.po";
-import { AddEntityPO } from "../../pageObjects/add-entity.po";
-import { NotificationMenuPO } from "../../pageObjects/notification-menu.po";
+import { MyCoachingsPo } from "../../pageObjects/MyCoachingPagePO";
+import { CoachingPlansPO } from "../../pageObjects/CoachingPlansPO";
+import { CoachingPackagesPO } from "../../pageObjects/CoachingPackagePO";
+import { CoachingPlanDetailsPO } from "../../pageObjects/CoachingPlanDetailsPO";
+import { AddEntityPO } from "../../pageObjects/AddEntityPO";
+import { NotificationMenuPO } from "../../pageObjects/NotificationMenuPO";
 
 
 let myCoachingsPage : MyCoachingsPo;

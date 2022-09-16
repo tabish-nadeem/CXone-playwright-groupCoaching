@@ -4,7 +4,7 @@ import { fdUtils } from '../common/FdUtils';
 import { URLs } from '../common/pageIdentifierURLs';
 import { UIConstants } from '../common/uiConstants';
 import { Utils } from '../common/utils';
-import { CoachingGridPO } from './coaching-grid.po';
+import { CoachingGridPO } from './CoachingGridPO';
 
 
 export class MyCoachingsPo {

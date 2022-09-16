@@ -1,6 +1,6 @@
 import {Page,Locator,expect} from '@playwright/test';
 import { fdUtils } from '../common/FdUtils';
-import { CoachingGridPO } from './coaching-grid.po';
+import { CoachingGridPO } from './CoachingGridPO';
 
 export class CoachingPlansPO {
     public defaultTimeoutInMillis: number;
