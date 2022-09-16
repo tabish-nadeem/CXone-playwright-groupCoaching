@@ -2,26 +2,27 @@
 import { Locator, Page} from "@playwright/test";
 
 export class SingleselectDropdownPO {
-    public readonly page:Page;
-    anscestor: Locator;
+    readonly page:Page;
+    // anscestor: Locator;
 
-    constructor(private dropdownElement?: Locator) {
-        if (!this.dropdownElement) {
-            this.anscestor = this.page.locator('cxone-singleselect-dropdown .cxone-singleselect-dropdown');
-        } else {
-            this.anscestor = dropdownElement;
-        }
+    constructor(page?: Page) {
+        this.page = page;
+        // if (!this.dropdownElement) {
+        //     this.anscestor = this.page.locator('cxone-singleselect-dropdown .cxone-singleselect-dropdown');
+        // } else {
+        //     this.anscestor = dropdownElement;
+        // }
     }
 
     toggle() {
-        return this.anscestor.locator('.dropdown-button').click() as Promise<any>;
+        return this.page.locator('.dropdown-button').click() as Promise<any>;
         //return $(this.selector + ' .dropdown-button').click() as Promise<any>;
     }
 
 
 
     async isOpen() {
-        return this.anscestor.locator('.icon-carat.dropdown-open').click() as Promise<any>;
+        return this.page.locator('.icon-carat.dropdown-open').click() as Promise<any>;
         //return await $(this.selector + ' .icon-carat.dropdown-open').isPresent();
     }
 
@@ -44,7 +45,7 @@ export class SingleselectDropdownPO {
 
     async selectItemByLabelWithoutSearchBox(label: string) {
         await this.open();
-        let elems = await this.anscestor.locator(`.options-wrapper .item-row >> text = ${label}`);
+        let elems = await this.page.locator(`.options-wrapper .item-row >> text = ${label}`);
         await this.hasScrollSideBarToClick(elems[0]);
     }
 

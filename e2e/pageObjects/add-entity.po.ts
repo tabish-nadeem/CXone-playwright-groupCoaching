@@ -1,4 +1,4 @@
-import {Page,Locator} from '@playwright/test';
+import {Page} from '@playwright/test';
 import { Utils } from '../common/utils';
 import { MultiSelectDropdownPo } from './multiselect-Dropdown.po';
 
@@ -12,8 +12,8 @@ export class AddEntityPO {
     await this.page.wait(protractor.ExpectedConditions.elementToBeClickable(elem));
     return elem.click();
   };
-  constructor(pageElement?: Locator) {
-    this.page.locator = pageElement || this.page.locator('body');
+  constructor(pageElement?: Page) {
+    this.page = pageElement || this.page.locator('body');
     this.utils = new Utils(this.page);
     this.elements = {
       rows: this.page.locator('.ag-center-cols-viewport .ag-row'),

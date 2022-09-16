@@ -4,8 +4,8 @@ export class MultiSelectDropdownPo {
     public elements;
     public page:Page;
 
-    public constructor(pageElement?:Locator) {
-        this.page.locator = pageElement || this.page.locator('.cxone-multiselect-dropdown');
+    public constructor(pageElement?:Page) {
+        this.page = pageElement || this.page.locator('.cxone-multiselect-dropdown');
         this.elements = {
             wrapper: this.page.locator,
             caret: this.page.locator('.icon-carat'),
@@ -64,7 +64,7 @@ export class MultiSelectDropdownPo {
     }
 
     public async getPlaceholderText() {
-        return await this.elements.placeholder.getText();
+        return await this.elements.placeholder.textContent();
     }
 
     public async selectAllClick() {

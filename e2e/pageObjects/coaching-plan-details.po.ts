@@ -16,9 +16,9 @@ export class CoachingPlanDetailsPO {
     public page:Page;
     public utils:Utils;
     public uiConstants:UIConstants;
-    public constructor(pageElement?: Locator, defaultTimeoutInMillis?: number) {
+    public constructor(pageElement?: Page, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
-        this.page.locator = pageElement || this.page.locator('body');
+        this.page = pageElement || this.page.locator('body');
         this.uiConstants = new UIConstants();
         this.gridPO = new CoachingGridPO(this.page.locator('#coaching-plan-details-grid-container'));
         this.filterDropdown = new MultiSelectDropdownPo('filter-dropdown');

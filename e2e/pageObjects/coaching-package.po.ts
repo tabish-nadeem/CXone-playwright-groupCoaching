@@ -9,9 +9,9 @@ export class CoachingPackagesPO {
     public page:Page;
     public utils:Utils;
     public gridPO: CoachingGridPO;
-    public constructor(pageElement?: Locator, defaultTimeoutInMillis?: number) {
+    public constructor(pageElement?: Page, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
-        this.page.locator = pageElement || this.page.locator('body');
+        this.page = pageElement || this.page.locator('body');
         this.gridPO = new CoachingGridPO(this.page.locator('#coaching-package-grid-container'));
         this.elements = {
             interactionElement: this.page.locator('.element-box-title >> text = Interactions'),

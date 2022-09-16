@@ -1,12 +1,14 @@
 import {Page,Locator,expect} from '@playwright/test';
 
 export class CoachingGridPO {
-    public constructor(private locator: Locator) {
-        this.locator = locator || locator('cxone-grid');
+    public page:Page;
+
+    public constructor(private locator: Page) {
+        this.page = locator || this.page.locator('cxone-grid');
     }
 
     public getAllRows() {
-        return this.locator('.ag-center-cols-viewport .ag-row');
+        return this.page.locator('.ag-center-cols-viewport .ag-row');
     }
 
 

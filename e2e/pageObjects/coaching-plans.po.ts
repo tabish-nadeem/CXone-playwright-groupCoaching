@@ -7,9 +7,9 @@ export class CoachingPlansPO {
     public elements;
     public gridPO: CoachingGridPO;
     public page:Page;
-    public constructor(pageElement?: Locator, defaultTimeoutInMillis?: number) {
+    public constructor(pageElement?: Page, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
-        this.page.locator = pageElement || this.page.locator('body');
+        this.page = pageElement || this.page.locator('body');
         this.gridPO = new CoachingGridPO(this.page.locator('#coaching-plan-grid-container'));
         this.elements = {
             coachingPlanContainer: this.page.locator('.coaching-plans-page'),
