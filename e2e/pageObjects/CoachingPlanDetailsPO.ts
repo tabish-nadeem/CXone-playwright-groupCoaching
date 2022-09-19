@@ -1,8 +1,9 @@
-import {Page} from '@playwright/test';
+import {Page,Locator} from '@playwright/test';
 import { fdUtils } from '../common/FdUtils';
 import { UIConstants } from '../common/uiConstants';
 import { Utils } from '../common/utils';
 import { CoachingGridPO } from './CoachingGridPO';
+import { CommonUIUtils } from "cxone-playwright-test-utils";
 import { MultiSelectDropdownPo } from './MultiselectDropdownPO';
 import { SingleselectDropdownPO } from './SingleselectDropdownPO';
 
@@ -14,59 +15,59 @@ export class CoachingPlanDetailsPO {
     public page:Page;
     public utils:Utils;
     public uiConstants:UIConstants;
-    public coachingPlanContainer;
-    public breadCrumb;
-    public pageTitle;
-    public singleSelectDropDown;
-    public searchField;
-    public cancelBtn;
-    public cancelModalBtn;
-    public submitBtn;
-    public planNameHeading;
-    public planNameInputField;
-    public selectCoachingPackageHeading;
-    public startDateHeading;
-    public startDateInputField;
-    public endDateHeading;
-    public endDateInputField;
-    public addEmployeeBtn;
-    public addUsers;
-    public addUsers1;
-    public removeUsers;
-    public removeAllLinkSelectedTab;
-    public removeAllLinkAddedTab;
-    public noEmployeesErr;
-    public addEmployeeModalWrapper;
-    public addUsersModal;
-    public employeeName;
-    public addEmployeeSaveBtn;
-    public planStartDate;
-    public planEndDate;
-    public selectAll;
-    public userCountLbl;
-    public allEmployeeCards;
-    public planNameErrorMessage;
-    public coachingPackageErrorMessage;
-    public assignedEmployeesErrorMessage;
-    public sendReminderBtn;
-    public notificationPopover;
-    public completionStatus;
-    public filterButton;
-    public clearAllFilters;
-    public tag;
-    public tags;
-    public searchAssignedUsers;
-    public removeSingleUser;
-    public disabledSchedulingOption;
-    public activeSchedulingOption;
-    public enabledSchedulingOption;
-    public spinner;
-    public conflictScheduleStatus;
-    public totalCount;
-    public selectAllUsers;
-    public modalTitle;
-    public cancelBtn_;
-    public clearBtn;
+    public coachingPlanContainer: Locator;
+    public breadCrumb: Locator;
+    public pageTitle: Locator;
+    public singleSelectDropDown: Locator;
+    public searchField: Locator;
+    public cancelBtn: Locator;
+    public cancelModalBtn: Locator;
+    public submitBtn: Locator;
+    public planNameHeading: Locator;
+    public planNameInputField: Locator;
+    public selectCoachingPackageHeading: Locator;
+    public startDateHeading: Locator;
+    public startDateInputField: Locator;
+    public endDateHeading: Locator;
+    public endDateInputField: Locator;
+    public addEmployeeBtn: Locator;
+    public addUsers: Locator;
+    public addUsers1: Locator;
+    public removeUsers: Locator;
+    public removeAllLinkSelectedTab: Locator;
+    public removeAllLinkAddedTab: Locator;
+    public noEmployeesErr: Locator;
+    public addEmployeeModalWrapper: Locator;
+    public addUsersModal: Locator;
+    public employeeName: Locator;
+    public addEmployeeSaveBtn: Locator;
+    public planStartDate: Locator;
+    public planEndDate: Locator;
+    public selectAll: Locator;
+    public userCountLbl: Locator;
+    public allEmployeeCards: Locator;
+    public planNameErrorMessage: Locator;
+    public coachingPackageErrorMessage: Locator;
+    public assignedEmployeesErrorMessage: Locator;
+    public sendReminderBtn: Locator;
+    public notificationPopover: Locator;
+    public completionStatus: Locator;
+    public filterButton: Locator;
+    public clearAllFilters: Locator;
+    public tag: Locator;
+    public tags: Locator;
+    public searchAssignedUsers: Locator;
+    public removeSingleUser: Locator;
+    public disabledSchedulingOption: Locator;
+    public activeSchedulingOption: Locator;
+    public enabledSchedulingOption: Locator;
+    public spinner: Locator;
+    public conflictScheduleStatus: Locator;
+    public totalCount: Locator;
+    public selectAllUsers: Locator;
+    public modalTitle: Locator;
+    public cancelBtn_: Locator;
+    public clearBtn: Locator;
     public constructor(pageElement?: Page, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page = pageElement || this.page.locator('body');
@@ -169,7 +170,7 @@ export class CoachingPlanDetailsPO {
 
 
     public async clickAddUsersButton() {
-        await protractor.testUtils.waitForItemToBeClickable(this.addUsers,30000);
+        await CommonUIUtils.waitForItemToBeClickable(this.addUsers,30000);
         await this.addUsers.click();
         return await this.page.waitForSelector(this.addUsersModal);
     }
@@ -220,7 +221,7 @@ export class CoachingPlanDetailsPO {
     
 
     public async clickFilterButton() {
-        await protractor.testUtils.waitForItemToBeClickable(this.getFilterButton());
+        await CommonUIUtils.waitForItemToBeClickable(this.getFilterButton());
         return await this.getFilterButton().click();
     }
 
@@ -247,7 +248,7 @@ export class CoachingPlanDetailsPO {
 
 
     public async waitForSubmitButtonToBeClickable() {
-        return await protractor.testUtils.waitForItemToBeClickable(this.submitBtn);
+        return await CommonUIUtils.waitForItemToBeClickable(this.submitBtn);
     }
 
 

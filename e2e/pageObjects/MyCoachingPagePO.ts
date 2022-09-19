@@ -14,17 +14,17 @@ export class MyCoachingsPo {
     public uiConstants:UIConstants;
     public gridPO: CoachingGridPO;
 
-    public coachingPlanContainer;
-    public pageTitle;
-    public noItemsOverlayText;
-    public searchField;
-    public downloadFileName;
-    public buttonsWrapper;
-    public coachingSession;
-    public actionBtns;
-    public searchCoaching;
-    public formExecutorScreen;
-    public spinner;
+    public coachingPlanContainer: Locator;
+    public pageTitle: Locator;
+    public noItemsOverlayText: Locator;
+    public searchField: Locator;
+    public downloadFileName: Locator;
+    public buttonsWrapper: Locator;
+    public coachingSession: Locator;
+    public actionBtns: Locator;
+    public searchCoaching: Locator;
+    public formExecutorScreen: Locator;
+    public spinner: Locator;
 
     public constructor(pageElement?: Page,defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
@@ -87,7 +87,7 @@ export class MyCoachingsPo {
     }
 
     public async clickSubmitButton() {
-        const button = await this.elements.buttonsWrapper.locator('button >> text = Submit');
+        const button = await this.buttonsWrapper.locator('button >> text = Submit');
         await button.click();
         await this.utils.delay(5000);
         await this.utils.waitForSpinnerToDisappear();
@@ -95,8 +95,8 @@ export class MyCoachingsPo {
 
 
     public async openCoachingSession(coachingPlan) {
-        await this.page.waitForSelector(this.elements.coachingSession(coachingPlan),30000);
-        await this.elements.coachingSession(coachingPlan).click();
+        await this.page.waitForSelector(this.coachingSession(coachingPlan),30000);
+        await this.coachingSession(coachingPlan).click();
         await this.page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingExecutor'));
         await this.utils.waitForSpinnerToDisappear();
     }

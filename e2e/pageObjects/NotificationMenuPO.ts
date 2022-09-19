@@ -5,11 +5,11 @@ export class NotificationMenuPO {
 
   DEFAULT_WAIT = 20000;
 
-  public openCloseMenuButton;
-  public badge;
-  public notificationsMenuPopover;
-  public notificationsMenuHeader;
-  public notificationsList;
+  public openCloseMenuButton: Locator;
+  public badge: Locator;
+  public notificationsMenuPopover: Locator;
+  public notificationsMenuHeader: Locator;
+  public notificationsList: Locator;
 
   constructor() {
       this.openCloseMenuButton =this.page.locator('.notification-popover-trigger');

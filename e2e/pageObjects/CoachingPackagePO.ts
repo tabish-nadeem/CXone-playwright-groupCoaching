@@ -8,19 +8,19 @@ export class CoachingPackagesPO {
     public page:Page;
     public utils:Utils;
     public gridPO: CoachingGridPO;
-    public interactionElement;
-    public coachingPackagePage;
-    public breadCrumb;
-    public checkedText;
-    public publishBtn;
-    public unpublishBtn;
-    public bulkDeleteBtn;
-    public confirmCancelBtn;
-    public clickConfirmDelete;
-    public clickNoConfirmDelete;
-    public delPublishPackagePopover;
-    public inlineBold;
-    public spinner;
+    public interactionElement: Locator;
+    public coachingPackagePage: Locator;
+    public breadCrumb: Locator;
+    public checkedText: Locator;
+    public publishBtn: Locator;
+    public unpublishBtn: Locator;
+    public bulkDeleteBtn: Locator;
+    public confirmCancelBtn: Locator;
+    public clickConfirmDelete: Locator;
+    public clickNoConfirmDelete: Locator;
+    public delPublishPackagePopover: Locator;
+    public inlineBold: Locator;
+    public spinner: Locator;
     public constructor(pageElement?: Page, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page = pageElement || this.page.locator('body');
@@ -57,5 +57,19 @@ export class CoachingPackagesPO {
         await this.navigateToCoachingPackageManager();
     }
 
+
+    public async navigateToCoachingDesigner(stat?) {
+        await this.page.get(fdUtils.getPageIdentifierUrls('coaching.coachingPackageDesigner'));
+        await this.page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPackageDesigner'));
+        await this.page.waitForSelector(this.interactionElement, 30000);
+        await this.utils.waitForSpinnerToDisappear();
+    }
+
+    public async openSavedPackage(formName) {
+        const row = await this.gridPO.getRowByColumnText('formName', formName);
+        await this.page.waitForSelector(row, 30000);
+        await row.click();
+        await this.utils.waitForSpinnerToDisappear();
+    }
 
 }

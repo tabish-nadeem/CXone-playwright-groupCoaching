@@ -1,19 +1,22 @@
 import {Page,Locator} from '@playwright/test';
 
 export class MultiSelectDropdownPo {
-    public elements;
     public page:Page;
+    public wrapper: Locator;
+    public caret: Locator;
+    public allChoiceRows: Locator;
+    public choicesLabels: Locator;
+    public inputText: Locator;
+    public placeholder: Locator;
 
     public constructor(pageElement?:Page) {
         this.page = pageElement || this.page.locator('.cxone-multiselect-dropdown');
-        this.elements = {
-            wrapper: this.page.locator,
-            caret: this.page.locator('.icon-carat'),
-            allChoiceRows: this.page.locator('.item-row:not([class~="active"])'),
-            choicesLabels: this.page.locator('.option-content'),
-            inputText: this.page.locator('.search-wrapper input'),
-            placeholder: this.page.locator('[class~="button-text"]')
-        };
+            this.wrapper= this.page.locator;
+            this.caret = this.page.locator('.icon-carat');
+            this.allChoiceRows = this.page.locator('.item-row:not([class~="active"])');
+            this.choicesLabels = this.page.locator('.option-content');
+            this.inputText = this.page.locator('.search-wrapper input');
+            this.placeholder = this.page.locator('[class~="button-text"]');
     }
 
     public async isOpen() {
@@ -21,7 +24,7 @@ export class MultiSelectDropdownPo {
     }
 
     public async toggleOpened() {
-        return await this.elements.caret.click();
+        return await this.caret.click();
     }
 
     public async getSelectedCount() {
@@ -32,16 +35,16 @@ export class MultiSelectDropdownPo {
     public async open() {
         let temp = await this.isOpen();
         if (!temp) {
-            await this.elements.caret.click();
+            await this.caret.click();
             await this.page.waitForSelector(this.page.locator('.options-wrapper'));
         }
     }
 
     public async selectItemByLabel(label) {
         await this.open();
-        await this.elements.inputText.clear();
-        await this.elements.inputText.sendKeys(label);
-        return await this.elements.allChoiceRows.first().click();
+        await this.inputText.clear();
+        await this.inputText.sendKeys(label);
+        return await this.allChoiceRows.first().click();
     }
 
     public async selectItemByLabelNoSearch(label) {
@@ -64,7 +67,7 @@ export class MultiSelectDropdownPo {
     }
 
     public async getPlaceholderText() {
-        return await this.elements.placeholder.textContent();
+        return await this.placeholder.textContent();
     }
 
     public async selectAllClick() {
@@ -80,7 +83,7 @@ export class MultiSelectDropdownPo {
     public async close() {
         let isOpened = await this.isOpen();
         if (isOpened) {
-            await this.elements.caret.click();
+            await this.caret.click();
         }
     }
 

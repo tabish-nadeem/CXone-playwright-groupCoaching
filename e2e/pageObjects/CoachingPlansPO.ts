@@ -1,25 +1,26 @@
 import {Page,Locator,expect} from '@playwright/test';
 import { fdUtils } from '../common/FdUtils';
+import { CommonUIUtils } from "cxone-playwright-test-utils";
 import { CoachingGridPO } from './CoachingGridPO';
 
 export class CoachingPlansPO {
     public defaultTimeoutInMillis: number;
     public gridPO: CoachingGridPO;
     public page:Page;
-    public coachingPlanContainer;
-    public coachingPlansHeader;
-    public coachingPlanNameHeaderColumn;
-    public remainingDaysHeaderColumn;
-    public noOfEmployeesHeaderColumn;
-    public planStatusHeaderColumn;
-    public responsesHeaderColumn;
-    public actionsHeaderColumn;
-    public coachingPlanDetailsGrid;
-    public planRow;
-    public searchPlan;
-    public noRowsOverlayText;
-    public newCoachingPlanBtn;
-    public cancelButton;
+    public coachingPlanContainer: Locator;
+    public coachingPlansHeader: Locator;
+    public coachingPlanNameHeaderColumn: Locator;
+    public remainingDaysHeaderColumn: Locator;
+    public noOfEmployeesHeaderColumn: Locator;
+    public planStatusHeaderColumn: Locator;
+    public responsesHeaderColumn: Locator;
+    public actionsHeaderColumn: Locator;
+    public coachingPlanDetailsGrid: Locator;
+    public planRow: Locator;
+    public searchPlan: Locator;
+    public noRowsOverlayText: Locator;
+    public newCoachingPlanBtn: Locator;
+    public cancelButton: Locator;
     public constructor(pageElement?: Page, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page = pageElement || this.page.locator('body');
@@ -50,7 +51,7 @@ export class CoachingPlansPO {
 
     //Function to open saved plan
     public async openSavedPlan(planName) {
-        await protractorConfig.testUtils.waitForItemToBeClickable(this.planRow(planName));
+        await CommonUIUtils.waitForItemToBeClickable(this.planRow(planName));
         await this.planRow(planName).click();
         await this.page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
         await this.page.waitForSelector(this.coachingPlanDetailsGrid, 30000);

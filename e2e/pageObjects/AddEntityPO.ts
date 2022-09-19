@@ -1,4 +1,4 @@
-import {Page} from '@playwright/test';
+import {Page,Locator} from '@playwright/test';
 import { Utils } from '../common/utils';
 import { MultiSelectDropdownPo } from './MultiselectDropdownPO';
 
@@ -8,14 +8,14 @@ export class AddEntityPO {
   public groupsDropdown: MultiSelectDropdownPo;
   public page:Page;
   public utils:Utils;
-  public rows;
-  public selectedEntityListItem;
-  public saveBtn;
-  public cancelBtn;
-  public selectedEntityTab;
-  public clearAll;
-  public dropDowns;
-  public moveButton;
+  public rows: Locator;
+  public selectedEntityListItem: Locator;
+  public saveBtn: Locator;
+  public cancelBtn: Locator;
+  public selectedEntityTab: Locator;
+  public clearAll: Locator;
+  public dropDowns: Locator;
+  public moveButton: Locator;
 
   clickElement = async (elem:any) => {
     await this.page.wait(protractor.ExpectedConditions.elementToBeClickable(elem));
