@@ -1,4 +1,4 @@
-Feature: Coaching Package Designer Test      
+Feature: Test to support inline editing & verify Test Package modal functionality at coaching package designer     
 
    Scenario: 1.Tests for basic coaching package scenarios
       Given Should verify popover message that active coaching packages can not be deleted
@@ -10,7 +10,7 @@ Feature: Coaching Package Designer Test
       Then Should able to bulk deactivate coaching packages
       Then Should able to bulk delete coaching packages
 
-   Scenario: 3.Test cases for RAIN-958
+   Scenario: 3.Tests to verify inline editing for all coaching package elements
       When Should verify inline formatting on attachment element
       Then Should verify inline formatting on section element
       Then Should verify inline formatting on label element
