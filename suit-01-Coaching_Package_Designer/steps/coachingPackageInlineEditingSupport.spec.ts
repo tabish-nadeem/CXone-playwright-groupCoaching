@@ -11,6 +11,13 @@ import { fdUtils } from "../../e2e/common/FdUtils";
 import { AdminUtilsNoUI } from "../../e2e/common/AdminUtilsNoUI";
 import { CommonQMNoUIUtils } from "../../e2e/common/CommonQMNoUIUtils";
 import { GlobalTenantUtils } from "../../e2e/common/globalTenantUtils";
+import FormDesignerPagePO from "../../e2e/pageObjects/FormDesignerPagePO";
+import { CoachingPackagesPO } from "../../e2e/pageObjects/CoachingPackagePO";
+import { DurationComponentPO } from "../../e2e/pageObjects/DurationPO";
+import { ObjectivesComponentPO } from "../../e2e/pageObjects/ObjectivesComponentPO";
+import { FormAreaComponentPo } from "../../e2e/pageObjects/FormAreaComponentPO";
+import { DesignerToolbarComponentPO } from "../../e2e/pageObjects/DesignerToolbarComponentPO";
+import { TestFormModalComponentPo } from "../../e2e/pageObjects/TestFormModalComponentPO";
 
 
 let browser: any;
@@ -104,11 +111,11 @@ BeforeAll({timeout: 400 * 1000}, async () => {
     coachingPackage = new CoachingPackagesPO();
     formDesigner = new FormDesignerPagePO();
     duration = new DurationComponentPO();
-    testFormModal = new TestFormModalComponentPO();
+    testFormModal = new TestFormModalComponentPo();
     objectives = new ObjectivesComponentPO();
-    formAreaComponent = new FormAreaComponentPO();
-    designerToolBarComponent = new DesignerToolbarComponentPO()
-    
+    formAreaComponent = new FormAreaComponentPo(page);
+    designerToolBarComponent = new DesignerToolbarComponentPO(page)
+
     userObject = (await CommonNoUIUtils.login(userDetails.adminCreds.email, userDetails.adminCreds.password, true)).user;
     token = await loginPage.login(userDetails.adminCreds.email, userDetails.adminCreds.password);
     dateFormat = await LocalizationNoUI.getDateStringFormat(localeString);
