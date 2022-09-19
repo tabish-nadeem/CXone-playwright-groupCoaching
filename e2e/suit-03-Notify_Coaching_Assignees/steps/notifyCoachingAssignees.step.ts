@@ -231,16 +231,16 @@ AfterAll({ timeout: 400 * 1000}, async () =>{
 })
 
 
-Given("STEP-1: Should verify that the agent submit the coaching",{ timeout: 60 * 1000 }, async () => {
+Given("Should verify that the agent submit the coaching",{ timeout: 60 * 1000 }, async () => {
         await submitCoaching(testDataUsed.agentUser1['emailAddress'], testDataUsed.agentUser1['password'], testDataUsed.coachingPlanName, 'Submit', 'Completed');
 });
 
-When("STEP-2: Should verify that the evaluator submit the coaching", { timeout: 60 * 1000 }, async () => {
+When("Should verify that the evaluator submit the coaching", { timeout: 60 * 1000 }, async () => {
         await submitCoaching(testDataUsed.evaluatorUser3['emailAddress'], testDataUsed.evaluatorUser3['password'], testDataUsed.coachingPlanName, 'Submit', 'Completed');
 });
 
 
-When("STEP-3: Should not display Send Reminder button if new future dated coaching plan is created", { timeout: 60 * 1000 }, async () => {
+When("Should not display Send Reminder button if new future dated coaching plan is created", { timeout: 60 * 1000 }, async () => {
         await loginPage.login(testDataUsed.adminUser['emailAddress'], testDataUsed.adminUser['password']);
         await coachingPlan.navigateToCoachingPlanPage();
         await CommonUIUtils.waitUntillIconLoaderDone(fdUtils.getPageIdentifierUrls('coaching.coachingPlans'));
@@ -273,7 +273,7 @@ When("STEP-3: Should not display Send Reminder button if new future dated coachi
 
 });
 
-Then("STEP-4: Should display Send Reminder button for an Activated plan", { timeout: 60 * 1000 }, async () => {
+Then("Should display Send Reminder button for an Activated plan", { timeout: 60 * 1000 }, async () => {
     await coachingPlan.navigateToCoachingPlanPage();
     await CommonUIUtils.waitForLoadingToDisappear(page);
     let row = await coachingPlan.getRowElementsByPlanName(testDataUsed.coachingPlanName);
@@ -290,7 +290,7 @@ Then("STEP-4: Should display Send Reminder button for an Activated plan", { time
     expect(count).toEqual('3 Total');
 });
 
-Then("STEP-5: Should display Send Reminder button tool-tip", { timeout: 60 * 1000 }, async () => {
+Then("Should display Send Reminder button tool-tip", { timeout: 60 * 1000 }, async () => {
     await browser.actions().mouseMove(await coachingPlanDetailsPage.getSendReminderButton()).perform();
     await page.waitForSelector(await coachingPlanDetailsPage.getToolTipAtSendReminderBtn());
     let text = await coachingPlanDetailsPage.getToolTipAtSendReminderBtn().getText();
@@ -298,7 +298,7 @@ Then("STEP-5: Should display Send Reminder button tool-tip", { timeout: 60 * 100
 });
 
 
-Then("STEP-6: Should verify notification if send reminder button is clicked", { timeout: 60 * 1000 }, async () => {
+Then("Should verify notification if send reminder button is clicked", { timeout: 60 * 1000 }, async () => {
     await coachingPlanDetailsPage.clickSendReminderButton();
     let msg = await utils.getToastMessage();
     expect(msg).toEqual(fdUtils.getExpectedString('coachingPlanDetails.succeedToNotifyPlan'));
@@ -309,7 +309,7 @@ Then("STEP-6: Should verify notification if send reminder button is clicked", { 
     expect(await page.locator('.notification-item-container').getAttribute('class')).toContain('unread');
 });
 
-Then("STEP-7: Should verify that send reminder button is disabled & will be enabled after refresh", { timeout: 60 * 1000 }, async () => {
+Then("Should verify that send reminder button is disabled & will be enabled after refresh", { timeout: 60 * 1000 }, async () => {
     let isEnabled = await fdUtils.isElementEnabled(coachingPlanDetailsPage.getSendReminderButton(),'');
     expect(isEnabled).toBeFalsy();
     await browser.refresh();
@@ -320,7 +320,7 @@ Then("STEP-7: Should verify that send reminder button is disabled & will be enab
     expect(isEnabled).toBeTruthy();
 });
 
-Then("STEP-8: Should verify completion status", { timeout: 60 * 1000 }, async () => {
+Then("Should verify completion status", { timeout: 60 * 1000 }, async () => {
     await coachingPlanDetailsPage.clickFilterButton();
     await coachingPlanDetailsPage.selectStatus(['Completed']);
     await coachingPlanDetailsPage.clickFilterButton();
@@ -342,7 +342,7 @@ Then("STEP-8: Should verify completion status", { timeout: 60 * 1000 }, async ()
     expect(evaluatorData.coachingCompleted).toEqual('Yes');
 });
 
-Then("STEP-9: Should verify not completion status", { timeout: 60 * 1000 }, async () => {
+Then("Should verify not completion status", { timeout: 60 * 1000 }, async () => {
     await coachingPlanDetailsPage.clickFilterButton();
     await coachingPlanDetailsPage.selectStatus(['Not Completed']);
     await coachingPlanDetailsPage.clickFilterButton();
@@ -359,7 +359,7 @@ Then("STEP-9: Should verify not completion status", { timeout: 60 * 1000 }, asyn
     await coachingPlanDetailsPage.resetFilterOptions();
 });
 
-Then("STEP-10: Should verify status of all completed coachings", { timeout: 60 * 1000 }, async () => {
+Then("Should verify status of all completed coachings", { timeout: 60 * 1000 }, async () => {
     await myCoachingsPage.navigateToMyCoachingsPage();
     await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.myCoaching'));
     await myCoachingsPage.openCoachingSession(testDataUsed.coachingPlanName);
@@ -397,7 +397,7 @@ Then("STEP-10: Should verify status of all completed coachings", { timeout: 60 *
     await loginPage.logout();
 });
 
-Then("STEP-11: Should verify that agents who has completed coaching earlier Should not receive new notification", { timeout: 60 * 1000 }, async () => {
+Then("Should verify that agents who has completed coaching earlier Should not receive new notification", { timeout: 60 * 1000 }, async () => {
     await CommonNoUIUtils.login(testDataUsed.agentUser1['emailAddress'], testDataUsed.agentUser1['password'],true);
     await myCoachingsPage.navigateToMyCoachingsPage();
     await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.myCoaching'));
@@ -414,7 +414,7 @@ Then("STEP-11: Should verify that agents who has completed coaching earlier Shou
 });
 
 
-Then("STEP-12: Should check the title and the content of the last arrived notification and mark as read", { timeout: 60 * 1000 }, async () => {
+Then("Should check the title and the content of the last arrived notification and mark as read", { timeout: 60 * 1000 }, async () => {
     await page.locator('.badge').click();
     await page.waitForSelector(page.locator('.notification-popover-wrapper'), 10000);
     expect(await page.locator('.notification-item-container').getAttribute('class')).toContain('unread');
@@ -428,7 +428,7 @@ Then("STEP-12: Should check the title and the content of the last arrived notifi
 });
 
 
-Then("STEP-13: Should search 1 user who has completed coaching", { timeout: 60 * 1000 }, async () => {
+Then("Should search 1 user who has completed coaching", { timeout: 60 * 1000 }, async () => {
     await CommonNoUIUtils.login(testDataUsed.adminUser['emailAddress'], testDataUsed.adminUser['password'],true);
     await coachingPlan.navigateToCoachingPlanPage();
     await page.waitForSelector(fdUtils.getPageIdentifierUrls('coaching.coachingPlans'));
