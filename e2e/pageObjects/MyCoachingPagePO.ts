@@ -9,34 +9,43 @@ import { CoachingGridPO } from './CoachingGridPO';
 
 export class MyCoachingsPo {
     public defaultTimeoutInMillis: number;
-    public elements;
     public page:Page;
     public utils:Utils;
     public uiConstants:UIConstants;
     public gridPO: CoachingGridPO;
+
+    public coachingPlanContainer;
+    public pageTitle;
+    public noItemsOverlayText;
+    public searchField;
+    public downloadFileName;
+    public buttonsWrapper;
+    public coachingSession;
+    public actionBtns;
+    public searchCoaching;
+    public formExecutorScreen;
+    public spinner;
 
     public constructor(pageElement?: Page,defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page = pageElement || this.page.locator('body');
         this.gridPO = new CoachingGridPO(this.page.locator('#my-coaching-grid-container'));
         this.uiConstants = new UIConstants();
-        this.elements = {
-            coachingPlanContainer: this.page.locator('.my-coaching-page'),
-            pageTitle: this.page.locator('#my-coaching-page-title'),
-            noItemsOverlayText: this.page.locator('.no-rows-overlay-text'),
-            searchField: this.page.locator('.cxone-omnibar .search-wrapper input'),
-            downloadFileName: this.page.locator('.file-text-link'),
-            buttonsWrapper: this.page.locator('.buttons-wrapper'),
-            coachingSession: (coachingPlan) => {
+            this.coachingPlanContainer = this.page.locator('.my-coaching-page');
+            this.pageTitle = this.page.locator('#my-coaching-page-title');
+            this.noItemsOverlayText = this.page.locator('.no-rows-overlay-text');
+            this.searchField = this.page.locator('.cxone-omnibar .search-wrapper input');
+            this.downloadFileName = this.page.locator('.file-text-link');
+            this.buttonsWrapper = this.page.locator('.buttons-wrapper');
+            this.coachingSession = (coachingPlan:any) => {
                 return this.page.locator('xpath=//*[@col-id="coachingPlanName"]//div[text()="' + coachingPlan + '"]');
             },
-            actionBtns: function (buttonText) {
+            this.actionBtns = function (buttonText:any) {
                 return this.page.locator(`button,input[type="button"], input[type="submit"] >> text= ${buttonText}`);
             },
-            searchCoaching: this.page.locator('#my-coaching-grid input'),
-            formExecutorScreen: this.page.locator('.form-executor-page'),
-            spinner: this.page.locator('div.spinner.spinner-bounce-middle')
-        };
+            this.searchCoaching = this.page.locator('#my-coaching-grid input');
+            this.formExecutorScreen = this.page.locator('.form-executor-page');
+            this.spinner = this.page.locator('div.spinner.spinner-bounce-middle');
     }
 
 

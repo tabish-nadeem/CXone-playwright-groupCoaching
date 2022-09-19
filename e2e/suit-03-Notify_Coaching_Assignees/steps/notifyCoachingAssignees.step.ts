@@ -254,7 +254,7 @@ When("Should not display Send Reminder button if new future dated coaching plan 
         await CommonUIUtils.waitForLoadingToDisappea();
         await addUsersModal.selectAll();
         await CommonUIUtils.waitForLoadingToDisappea();
-        await addUsersModal.saveBtn();
+        await addUsersModal.saveBtnFunc();
         await CommonUIUtils.waitForLoadingToDisappea();
         await coachingPlanDetailsPage.waitForSubmitButtonToBeClickable();
         let text = await coachingPlanDetailsPage.getAddEmployeeButton().getText();
