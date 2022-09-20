@@ -1,16 +1,16 @@
 import { Given, When, Then, BeforeAll, AfterAll } from "cucumber";
 import { BrowserContext, Page, expect, chromium } from "@playwright/test";
 import * as _ from 'lodash';
-import { GlobalTenantUtils } from "../../e2e/common/globalTenantUtils";
+import { GlobalTenantUtils } from "../../common/globalTenantUtils";
 import { CommonUIUtils } from "cxone-playwright-test-utils";
-import { FeatureToggleUtils } from "../../e2e/common/FeatureToggleUtils";
-import { LocalizationNoUI } from "../../e2e/common/LocalizationNoUI";
-import { CHARACTER_LIMIT } from "../../e2e/common/CONSTANTS";
-import { CoachingPackagesPO } from "../../e2e/pageObjects/CoachingPackagePO";
-import FormDesignerPagePO from "../../e2e/pageObjects/FormDesignerPagePO";
-import { DurationComponentPO } from "../../e2e/pageObjects/DurationPO";
-import { ObjectivesComponentPO } from "../../e2e/pageObjects/ObjectivesComponentPO";
-import { FormAreaComponentPo } from "../../e2e/pageObjects/FormAreaComponentPO";
+import { FeatureToggleUtils } from "../../common/FeatureToggleUtils";
+import { LocalizationNoUI } from "../../common/LocalizationNoUI";
+import { CHARACTER_LIMIT } from "../../common/CONSTANTS";
+import { CoachingPackagesPO } from "../../pageObjects/CoachingPackagePO";
+import FormDesignerPagePO from "../../pageObjects/FormDesignerPagePO";
+import { DurationComponentPO } from "../../pageObjects/DurationPO";
+import { ObjectivesComponentPO } from "../../pageObjects/ObjectivesComponentPO";
+import { FormAreaComponentPo } from "../../pageObjects/FormAreaComponentPO";
 
 let browser: any;
 let context: BrowserContext;
