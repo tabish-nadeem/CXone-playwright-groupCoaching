@@ -26,6 +26,9 @@ export class TestFormModalComponentPo {
     public dropdown: Locator;
     public errorMessage: Locator;
     public sectionScore: Locator;
+    public objectives: Locator;
+    public duration: Locator;
+    public interactionRows: Locator;
 
 
     constructor(){
@@ -52,6 +55,9 @@ export class TestFormModalComponentPo {
             this.dropdown = this.page.locator('.test-form-modal-wrapper * .form-designer-dropdown');
             this.errorMessage = this.page.locator('.form-designer-error-msg');
             this.sectionScore = this.page.locator('.section-score .current-points');
+            this.objectives = this.page.locator('.objectives-view-only li');
+            this.duration = this.page.locator('.duration-val');
+            this.interactionRows = this.page.locator('.test-form-modal-wrapper .form-element-interactions .interactions-grid-body-center[role="row"]');
         
     }
 
@@ -126,6 +132,18 @@ export class TestFormModalComponentPo {
         await elem.element(this.textArea).type(text);
     }
 
+    async getObjectives() {
+        return await this.objectives.getText();
+    }
+
+    async getDuration() {
+        return this.duration.getText();
+    }
+
+    async getInteractionRows() {
+        return this.interactionRows;
+    }
+
     async clickHyperLink(questionText): Promise<any> {
         const elem = await this.getQuestionElement(questionText);
         await elem.element(this.hyperlink).click();
@@ -139,7 +157,7 @@ export class TestFormModalComponentPo {
     async selectSingleSelectDropDown(questionText, labelToSelect): Promise<any> {
         const elem = await this.getQuestionElement(questionText);
         let dropdownPO = new SingleselectDropdownPO(elem.element(this.dropdown));
-        return dropdownPO.selectItem(labelToSelect);
+        return dropdownPO.selectItemByLabelWithoutSearchBox(labelToSelect);
     }
 
     async selectMultiSelectDropDown(questionText, labelToSelect): Promise<any> {
