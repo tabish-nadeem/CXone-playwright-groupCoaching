@@ -226,7 +226,7 @@ import { Utils } from "../../common/utils";
             await addEntity.selectAll();
             expect(webdriverUtils.getElementText(addEntity.getTotalCount())).toEqual('0 total (viewing 0)');
             expect(webdriverUtils.getElementText(addEntity.getTabLabel(0))).toEqual('SELECTED (1)');
-       
+       //return await page.locator('.first-last-name').textContent();
         })
         Then("Should verify that remove all link removes all the users from selected tab and adds them to users grid",{ timeout: 60 * 1000 }, async () => {
             await addEntity.removeAllFromActiveTab();
