@@ -70,7 +70,10 @@ export class CoachingPlansPO {
         };
     }
 
-
+    public async clickNewCoachingPlanButton() {
+        await CommonUIUtils.waitForItemToBeClickable(this.newCoachingPlanBtn);
+        await this.newCoachingPlanBtn.click();
+    }
     public async searchPlanAndOpen(planName) {
         await this.page.waitForSelector(this.searchPlan);
         await this.searchPlan.clear().sendKeys(planName);

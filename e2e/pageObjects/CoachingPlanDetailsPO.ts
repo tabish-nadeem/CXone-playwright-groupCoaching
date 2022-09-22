@@ -68,6 +68,7 @@ export class CoachingPlanDetailsPO {
     public modalTitle: Locator;
     public cancelBtn_: Locator;
     public clearBtn: Locator;
+    public warningModalElements;
     public constructor(pageElement?: Page, defaultTimeoutInMillis?: number) {
         this.defaultTimeoutInMillis = defaultTimeoutInMillis ? defaultTimeoutInMillis : 20000;
         this.page = pageElement || this.page.locator('body');
@@ -139,6 +140,11 @@ export class CoachingPlanDetailsPO {
             this.modalTitle = this.page.locator('.message-modal-header-wrapper .text');
             this.cancelBtn_ = this.page.locator('cxone-modal-footer .btn-secondary');
             this.clearBtn = this.page.locator('cxone-modal-footer .btn-primary');
+            this.warningModalElements = {
+                modalTitle: this.page.locator('.message-modal-header-wrapper .text'),
+                cancelBtn: this.page.locator('cxone-modal-footer .btn-secondary'),
+                clearBtn: this.page.locator('cxone-modal-footer .btn-primary')
+            };
         };
         
     
@@ -162,26 +168,75 @@ export class CoachingPlanDetailsPO {
         return await this.planNameInputField.clear().sendKeys(text);
     }
 
-
+    public getDisabledSchedulingOption() {
+        return this.disabledSchedulingOption;
+    }
+    public getEnabledSchedulingOption() {
+        return this.enabledSchedulingOption;
+    }
+    public async clickSchedulingOptions() {
+        return await this.getEnabledSchedulingOption().click();
+    }
     public async selectCoachingPackage(packageName) {
         // await this.
         return await this.coachingPackageDropdown.selectItemByLabelWithoutSearchBox(packageName);
     }
+    public async clearSchedulingOptions() {
+        return await this.warningModalElements.clearBtn.click();
+    }
+    public getActiveSchedulingOption() {
+        return this.activeSchedulingOption;
+    }
+    public getWarningModalTitle() {
+        return this.warningModalElements.modalTitle.isPresent();
+    }
 
-
+    public async getRowWithConflictScheduledStatus(index) {
+        let elem = this.conflictScheduleStatus.get(index);
+        await Utils.waitUntilVisible(elem);
+        return elem;
+    }
+    public async getLockIconOnEmployeeRow(employeeName?) {
+        let userRow = await this.getRowDataByAgentName(employeeName, false);
+        return userRow.lockIcon.isPresent();
+    }
     public async clickAddUsersButton() {
         await CommonUIUtils.waitForItemToBeClickable(this.addUsers,30000);
         await this.addUsers.click();
         return await this.page.waitForSelector(this.addUsersModal);
     }
+    public async waitForLockIconToDisplay(employeeName, timeOut?) {
+        let count = 1;
+        let sleepTime = 10000;
+        for (let i = 0; i < 10; i++) {
+            await this.navigate();
+            await this.page.waitForUrl(fdUtils.getPageIdentifierUrls('coaching.coachingPlanDetails'));
+            await this.utils.delay(sleepTime);
+            console.log('Trying to find lock icon at coaching plan details Page for user: [' + employeeName + ']for Retry: ' + count++);
+            if (await this.getLockIconOnEmployeeRow(employeeName)) {
+                return;
+            }
+        }
+        console.log('Unable to find lock icon!');
+    }
+    navigate() {
+        throw new Error('Method not implemented.');
+    }
 
-
+    public async getRowElement(userName) {
+        const rowByName = await this.gridPO.getRowByColumnText('employeeName', userName);
+        await Utils.waitUntilVisible(rowByName, 30000);
+        return rowByName;
+    }
 
     public async setPlanStartDate(dateVal) {
         await this.page.waitForSelector(this.planStartDate);
         return await this.planStartDate.clear().sendKeys(dateVal);
     }
-
+    public async clickCancelButton() {
+        await this.utils.waitForItemToBeClickable(this.cancelBtn,5000);
+        return await this.cancelBtn.click();
+    }
 
 
     public getAddEmployeeButton() {
@@ -245,7 +300,13 @@ export class CoachingPlanDetailsPO {
     }
 
 
-
+    public async clickRemoveSingleuser(index?) {
+        if (!index) {
+            index = 0;
+        }
+        await CommonUIUtils.waitForItemToBeClickable(this.removeSingleUser.get(index));
+        return await this.removeSingleUser.get(index).click();
+    }
 
     public async waitForSubmitButtonToBeClickable() {
         return await CommonUIUtils.waitForItemToBeClickable(this.submitBtn);
@@ -256,6 +317,36 @@ export class CoachingPlanDetailsPO {
     public getItemCount() {
         return this.totalCount.textContent();
     }
+    public getAddUsersButton() {
+        return this.addUsers;
+    }
+    public getStartDate() {
+        return this.planStartDate;
+    }
 
- 
+    public getEndDate() {
+        return this.planEndDate;
+    }
+    public getPlanNameErrorMessage() {
+        return this.planNameErrorMessage;
+    }
+    public getCoachingPackageErrorMessage() {
+        return this.coachingPackageErrorMessage;
+    }
+
+    public getAssignedEmployeesErrorMessage() {
+        return this.assignedEmployeesErrorMessage;
+    }
+    public async selectParticularUser(userName) {
+        const rowByName = await this.gridPO.getRowByColumnText('employeeName', userName);
+        await Utils.waitUntilVisible(rowByName);
+        let checkboxToSelect = await rowByName.element('span.ag-selection-checkbox .ag-icon.ag-icon-checkbox-unchecked');
+        let check = await checkboxToSelect.isPresent();
+        await Utils.waitUntilClickable(checkboxToSelect);
+        await checkboxToSelect.click();
+    }
+    public async clickRemoveUsersButton() {
+        await Utils.waitUntilClickable(this.removeUsers);
+        return await this.removeUsers.click();
+    }
 }

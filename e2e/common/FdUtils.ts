@@ -1,6 +1,7 @@
 import { Browser } from "@playwright/test";
 // import { async } from "@angular/core/testing";
 // import { Browser } from "@playwright/test";
+import {Page,Locator} from '@playwright/test';
 import { EnvUtils } from "../common/EnvUtils";
 import { HttpUtils } from "../common/HttpUtils";
 import { FeatureToggleUtils } from "../common/FeatureToggleUtils";
@@ -11,6 +12,7 @@ import { ApiUrl } from "src/ng2/assets/api-url";
 import { CommonNoUIUtils } from './CommonNoUIUtils';
 
 export class fdUtils {
+     public page:Page;
      static waitABit(timeToWait: number) {
           return new Promise<void>((resolve) => {
                setTimeout(() => {
@@ -177,6 +179,12 @@ export class fdUtils {
                });
           }
      };
+     static waitForLoadingToDisappear(timeToWait) {
+          if (!timeToWait) {
+              timeToWait = 60000;
+          }
+          return Utils.waitUntilNotVisible(Page.locator('.in-progress-row'), timeToWait);
+      }
      removeAllGroups = async (token: any, ids: any) => {
           //! wont work
      };

@@ -18,6 +18,3 @@ Feature: Test to support inline editing & verify Test Package modal functionalit
       Then Should verify inline formatting on hyperlink element
       Then Should verify inline formatting on a saved form
       Then Should verify inline formatting on a duplicated form
-      
-
-      

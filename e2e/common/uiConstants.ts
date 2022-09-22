@@ -6,7 +6,11 @@ export const FEATURE_TOGGLES = {
     FT_EDIT_EVALUATOR: 'release-QM-QP-Edit-Evaluator-CXQM-18068',
     FT_QP_TIMEZONE_HANDLING: 'release-QM-QP-Timezone-handling-CXQM-18543',
     RBAC_PERFMONITORING_TEAMLIST: 'release-rbac-evaluation-CXQM-19735',
-    FT_EXCLUDE_INACTIVE_USERS: 'release-QM-exclude-inactive-user-planMonitoringUI-CXQM-17187'
+    FT_EXCLUDE_INACTIVE_USERS: 'release-QM-exclude-inactive-user-planMonitoringUI-CXQM-17187',
+    ANGULAR8_MIGRATION_FALL21: 'utility-QM-angular8UpgradeFall21-CXQM-15033',
+    ANGULAR8_MIGRATION_SPRING22: 'utility-QM-angular8UpgradeSpring22-CXQM-16664',
+    RESTRICT_QUESTION_LENGTH_FT: 'utility-QM-restrict-form-data-question-title-CXQM-18756',
+    ENHANCED_ADD_EMPLOYEE_MODAL_FT: 'release-QM-performance-improvement-for-50k-users-CXQM-18051'
 };
 
 export const FORM_STATES = {

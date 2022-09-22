@@ -3,16 +3,28 @@ import { Page } from '@playwright/test'
 const DEFAULT_WAIT_TIME = 25000;
 
 export class Utils {
+    static waitForLoadingToDisappear() {
+        throw new Error("Method not implemented.");
+    }
+    static waitUntilClickable(checkboxToSelect: any) {
+        throw new Error('Method not implemented.');
+    }
+    static waitUntilNotVisible(arg0: any, timeToWait: any) {
+         throw new Error("Method not implemented.");
+    }
     readonly page: Page;
 
     constructor(page: Page) {
         this.page = page;
     }
+    static enablingFeatureToggle(ENHANCED_EVALUATOR_MODAL_FT: string, orgName: any, USER_TOKEN: string) {
+        throw new Error('Method not implemented.');
+   }
     
-    async waitForSpinnerToDisappear() {
-        const spinner = this.page.waitForSelector('[class="spinner spinner-bounce-middle"]');
-        (await spinner).waitForElementState("hidden");
-    }
+   static waitForSpinnerToDisappear() {
+    const spinner = this.page.waitForSelector('[class="spinner spinner-bounce-middle"]');
+    ( spinner).waitForElementState("hidden");
+}
 
     async delay(time: number) {
         return new Promise(function (resolve) {
@@ -49,7 +61,21 @@ export class Utils {
             return 'test';
         }
     }
-
+    static async waitUntilVisible(element: any, timeToWait?: number): Promise<void> {
+        try {
+          const waitTime = timeToWait ? timeToWait : DEFAULT_WAIT_TIME;
+          return new Promise(function (resolve) {
+            setTimeout(resolve, waitTime)
+        });
+        } catch (ex) {
+          console.error('failed while waiting for element to be visible');
+          throw ex;
+        }
+      }
+      async waitForItemToBeClickable (elem: any, timeout: any) {
+        var time = timeout || 5000;
+        await this.page.waitForFunction(EC.elementToBeClickable(elem), elem, { timeout: time });
+     }
     public async waitABit(timeToWait: number) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -59,4 +85,6 @@ export class Utils {
     }
     
 }
+
+
 
