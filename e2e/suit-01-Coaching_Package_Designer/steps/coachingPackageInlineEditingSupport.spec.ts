@@ -2,22 +2,22 @@ import { Given, When, Then, BeforeAll, AfterAll } from "cucumber";
 import { BrowserContext, Page, expect, chromium } from "@playwright/test";
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { CommonNoUIUtils } from "../../../e2e/common/CommonNoUIUtils";
 import { CommonUIUtils } from "cxone-playwright-test-utils";
-import { LoginPage } from "../../../e2e/common/login";
-import { LocalizationNoUI } from "../../../e2e/common/LocalizationNoUI";
-import { FeatureToggleUtils } from "../../../e2e/common/FeatureToggleUtils";
-import { fdUtils } from "../../../e2e/common/FdUtils";
-import { AdminUtilsNoUI } from "../../../e2e/common/AdminUtilsNoUI";
-import { CommonQMNoUIUtils } from "../../../e2e/common/CommonQMNoUIUtils";
-import { GlobalTenantUtils } from "../../../e2e/common/globalTenantUtils";
-import FormDesignerPagePO from "../../../e2e/pageObjects/FormDesignerPagePO";
-import { CoachingPackagesPO } from "../../../e2e/pageObjects/CoachingPackagePO";
-import { DurationComponentPO } from "../../../e2e/pageObjects/DurationPO";
-import { ObjectivesComponentPO } from "../../../e2e/pageObjects/ObjectivesComponentPO";
-import { FormAreaComponentPo } from "../../../e2e/pageObjects/FormAreaComponentPO";
-import { DesignerToolbarComponentPO } from "../../../e2e/pageObjects/DesignerToolbarComponentPO";
-import { TestFormModalComponentPo } from "../../../e2e/pageObjects/TestFormModalComponentPO";
+
+import { AdminUtilsNoUI } from "../../common/AdminUtilsNoUI";
+import { GlobalTenantUtils } from "../../common/globalTenantUtils";
+import { CoachingPackagesPO } from "../../pageObjects/CoachingPackagePO";
+import FormDesignerPagePO from "../../pageObjects/FormDesignerPagePO";
+import { DurationComponentPO } from "../../pageObjects/DurationPO";
+import { TestFormModalComponentPo } from "../../pageObjects/TestFormModalComponentPO";
+import { ObjectivesComponentPO } from "../../pageObjects/ObjectivesComponentPO";
+import { DesignerToolbarComponentPO } from "../../pageObjects/DesignerToolbarComponentPO";
+import { LoginPage } from "../../common/login";
+import { CommonNoUIUtils } from "../../common/CommonNoUIUtils";
+import { CommonQMNoUIUtils } from "../../common/CommonQMNoUIUtils";
+import { FormAreaComponentPo } from "../../pageObjects/FormAreaComponentPO";
+import { LocalizationNoUI } from "../../common/LocalizationNoUI";
+import { FeatureToggleUtils } from "../../common/FeatureToggleUtils";
 
 
 let browser: any;
@@ -25,17 +25,16 @@ let context: BrowserContext;
 let page:Page;
 let token, 
     userObject,
-    dateFormat,
     localeString = 'en-US';
 let userDetails:any;
 let globalTenantUtils:GlobalTenantUtils;
-let coachingPackage;
-let formDesigner;
-let duration;
-let testFormModal;
-let objectives;
-let formAreaComponent;
-let designerToolBarComponent;
+let coachingPackage:CoachingPackagesPO;
+let formDesigner:FormDesignerPagePO;
+let duration:DurationComponentPO;
+let testFormModal:TestFormModalComponentPo;
+let objectives:ObjectivesComponentPO;
+let formAreaComponent:FormAreaComponentPo;
+let designerToolBarComponent:DesignerToolbarComponentPO;
 let loginPage:LoginPage;
 
 
@@ -72,7 +71,7 @@ const getAdminUserInfo = async (token) => {
     });
 };
 
-const pushInteractionData = async (agentList:Array<any>, minDateTime:any, maxDateTime:any, noOfSegmentsToPush:string, token:any) => {
+const pushInteractionData = async (agentList:Array<any>, minDateTime:any, maxDateTime:any, noOfSegmentsToPush:any, token:any) => {
     let segmentDetails:any = {};
     let allPromises : any = [];
     for (let ii = 1; ii <= 16; ii++) {

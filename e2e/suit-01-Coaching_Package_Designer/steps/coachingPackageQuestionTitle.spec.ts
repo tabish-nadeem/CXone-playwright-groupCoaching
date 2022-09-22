@@ -16,10 +16,10 @@ let browser: any;
 let context: BrowserContext;
 let page:Page;
 let coachingPackage:CoachingPackagesPO;
-let formDesigner;
-let duration;
-let objectives;
-let formAreaComponent;
+let formDesigner:FormDesignerPagePO;
+let duration:DurationComponentPO;
+let objectives:ObjectivesComponentPO;
+let formAreaComponent:FormAreaComponentPo;
 let adminDetails,
     globalToken;
 let dateFormat,
