@@ -2,8 +2,10 @@ import { Given, When, Then, BeforeAll, AfterAll } from "cucumber";
 import { BrowserContext, Page, expect, chromium } from "@playwright/test";
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { uuid } from "uuid4";
 import { CommonNoUIUtils } from "../../../e2e/common/CommonNoUIUtils";
 import { CommonUIUtils } from "cxone-playwright-test-utils";
+import { DisableProtUtils } from "../../common/disableProtUtil"
 import { LoginPage } from "../../../e2e/common/login";
 import { LocalizationNoUI } from "../../../e2e/common/LocalizationNoUI";
 import { FeatureToggleUtils } from "../../../e2e/common/FeatureToggleUtils";
@@ -15,6 +17,7 @@ import { FEATURE_TOGGLES } from "../../../e2e/common/uiConstants";
 import { webdriverUtils } from "../../../e2e/common/webdriverUtils";
 import { AccountUtils } from "../../common/AccountUtils";
 import { Utils } from "../../common/utils";
+import { Credentials } from "../../common/support";
 //po'
 import { CoachingPlansPO } from "../../../e2e/pageObjects/CoachingPlansPO";
 import { CoachingPackagesPO } from "../../../e2e/pageObjects/CoachingPackagePO";
@@ -23,12 +26,15 @@ import { AddEntityPO } from "../../../e2e/pageObjects/AddEntityPO";
 import { ScheduleManagerPO } from "../../../e2e/pageObjects/schedule-manager.po";
 import { FormAreaComponentPo } from "../../../e2e/pageObjects/FormAreaComponentPO";
 import { FormExecutorPO} from "../../../e2e/pageObjects/form-executor.po";
+import { SearchPO} from "../../../e2e/pageObjects/searchPO";
+import { InteractionsElementPO } from "../../pageObjects/interactions.component.po"
+
 
 let browser: any;
 let context: BrowserContext;
 let page:Page;
 let globalTenantUtils:GlobalTenantUtils;
-let localeString = 'en-US';
+let localeString = 'en-US'; 
 let adminDetails, userCount, count, globalToken, userSkills;
 let loginPage:LoginPage;
 let planName = 'Plan_' + moment();
@@ -39,30 +45,47 @@ let coachingPlanDetailsPage = new CoachingPlanDetailsPO();
 let addEntity = new AddEntityPO();
 let schedulingOptions = new ScheduleManagerPO();
 let formAreaComponent = new FormAreaComponentPo(page);
+const searchPo = new SearchPO(page);
 let utils = new Utils(page);
+let disableProtUtils = new DisableProtUtils()
+let firstInteractionElement: any = new InteractionsElementPO(0);
+let secondInteractionElement: any = new InteractionsElementPO(1);
 
 let dateTimeFormat = 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
 
-let testDataUsed = {
+let testDataUsed: any = {
     adminId: '',
-    globalPassword: protractor.testUtils.validPassword,
+    globalPassword: Credentials.validPassword,
     teamName: 'DefaultTeam',
     teamUUID: '',
     token: ''
 };
 let userDetails;
 
-const elementTypes = protractor.formsMockService.getQuestionElementTypes();
+const elementTypes = {
+    "sectionFormType": `section`,
+    "dateTimeFormType": `datetime`,
+    "dropdownFormType": `dropdown`,
+    "labelFormType": `label`,
+    "hyperlinkFormType": `hyperlink`,
+    "longTextFormType": `textarea`,
+    "shortTextFormType": `text`,
+    "checkboxFormType": `checkbox`,
+    "radioFormType": `radio`,
+    "yesNoFormType": `yesno`,
+    "interactionsFormType": `interactions`,
+    "attachmentFormType": `attachment`
+};
 let userDetailsToPushInteractions;
 
 const removeFeatureToggle = async (toggleName, tenantName, token) => {
     console.log('Removing ', tenantName, ' from feature ', toggleName);
-    await protractor.featureToggleTestUtils.removeTenantFromFeature(toggleName, tenantName, token);
+    await FeatureToggleUtils.removeTenantFromFeature(toggleName, tenantName, token);
 };
 
 const enableFeatureToggle = async (toggleName, tenantName, token) => {
     console.log('Adding ', tenantName, ' to feature ', toggleName);
-    await protractor.featureToggleTestUtils.turnOnFeatureToggleForTenant(toggleName, tenantName, token);
+    await FeatureToggleUtils.turnOnFeatureToggleForTenant(toggleName, tenantName, token);
 };
 
 BeforeAll({timeout: 400 * 1000}, async () => {
@@ -70,32 +93,30 @@ BeforeAll({timeout: 400 * 1000}, async () => {
         headless: false,
         args: ['--window-position=-8,0']
     });
-    userDetails = protractor.globalTenantUtils.getDefaultTenantCredentials();
-            let token = await protractor.testUtils.login(userDetails.adminCreds.email, userDetails.adminCreds.password);
-            testDataUsed.token = token;
-            await enableFeatureToggle('mcr-search-contact-view-CXREC-7357', userDetails.orgName, testDataUsed.token);
-            await enableFeatureToggle('utility-QM-angular8UpgradeSpring22-CXQM-16664', userDetails.orgName, testDataUsed.token);
-            await protractor.testUtils.maximizeBrowserWindow();
-            userDetailsToPushInteractions = userDetails;
-            await protractor.testUtils.waitForPage(protractor.fdUtils.getPageIdentifierUrls('admin.employees'));
-            await coachingPackage.navigateToCoachingDesigner();
-            await browser.waitForAngular();
+    userDetails = globalTenantUtils.getDefaultTenantCredentials();
+    let token = await loginPage.login(userDetails.adminCreds.email, userDetails.adminCreds.password);
+    testDataUsed.token = token;
+    await enableFeatureToggle('mcr-search-contact-view-CXREC-7357', userDetails.orgName, testDataUsed.token);
+    await enableFeatureToggle('utility-QM-angular8UpgradeSpring22-CXQM-16664', userDetails.orgName, testDataUsed.token);
+    // await protractor.testUtils.maximizeBrowserWindow();
+    userDetailsToPushInteractions = userDetails;
+    await page.waitForURL('/admin/#/userManagement');
+    await coachingPackage.navigateToCoachingDesigner();
+    await browser.waitForAngular();
 })
 
 AfterAll({timeout: 400 * 1000}, async () => {
     removeFeatureToggle('mcr-search-contact-view-CXREC-7357', userDetails.orgName, testDataUsed.token);
-    await protractor.testUtils.logout(true, 40000, userDetails.orgName, testDataUsed.token);
+    await loginPage.logout();
 })
-let firstInteractionElement = new InteractionsElementPO(0);
-let secondInteractionElement = new InteractionsElementPO(1);
 
 Given("1.1 should add multiple interactions from search to element",{ timeout: 60 * 1000 }, async () => {
     const onStart = async () => {
-        userDetails = protractor.globalTenantUtils.getDefaultTenantCredentials();
+        userDetails = globalTenantUtils.getDefaultTenantCredentials();
         await getAdminUserId(userDetails.adminCreds.email, testDataUsed.token);
         await getDefaultTeamID(testDataUsed.token);
         let injectContact = false;
-        if (protractor.AUTH_APP_URL.includes('dev')) {
+        if (disableProtUtils.getEnvName() == 'dev') {
             injectContact = true;
         }
         await pushInteractionData(
@@ -106,7 +127,7 @@ Given("1.1 should add multiple interactions from search to element",{ timeout: 6
         await browser.sleep(60000);
     };
     //
-    userDetails = protractor.globalTenantUtils.getDefaultTenantCredentials();
+    userDetails = globalTenantUtils.getDefaultTenantCredentials();;
     await formAreaComponent.dragElementToFormArea(elementTypes.interactionsFormType);
     await formAreaComponent.setLabel('Set Title','Interactions1',elementTypes.interactionsFormType);
     await formAreaComponent.froalaSetBold('Set Title',elementTypes.interactionsFormType);
@@ -130,7 +151,7 @@ Then("1.4 should remove interactions from element",{ timeout: 60 * 1000 }, async
     expect(res).toEqual(19);
 })
 Then("1.5 should allow to add same interaction in different elements",{ timeout: 60 * 1000 }, async () => {
-    let allPromises = [];
+    let allPromises:any = [];
     await browser.refresh();
     await formAreaComponent.dragElementToFormArea(elementTypes.interactionsFormType);
     await formAreaComponent.setLabel('Set Title','Interactions1',elementTypes.interactionsFormType);
@@ -150,17 +171,16 @@ Then("1.5 should allow to add same interaction in different elements",{ timeout:
 })
 //
 const getAdminUserId = async (emailAddress, token) => {
-    let userList = await protractor.adminUtilsNoUI.getUsers(token);
+    let userList = await CommonNoUIUtils.getUsers(token);
     userDetails.id = _.find((userList.users), {emailAddress: emailAddress}).id;
     return await Promise.resolve(userDetails.id);
 };
 
 const addInteractionsToElement = async (elementObj, agentName) => {
     const formExecutor = new FormExecutorPO();
-    const searchPo = new SearchPo();
     await elementObj.clickAddInteractionsBtn();
     await formExecutor.switchToPopupWithoutPlayer();
-    await protractor.testUtils.waitForPage('/search/');
+    await page.waitForURL('/search/');
     await searchPo.searchByAgentName(agentName);
     await elementObj.clickSelectFirstBtn();
     await elementObj.clickAddBtn();
@@ -168,14 +188,14 @@ const addInteractionsToElement = async (elementObj, agentName) => {
 };
 
 const getDefaultTeamID = async (token) => {
-    let response = await protractor.adminUtilsNoUI.getAllTeams(token);
+    let response = await AdminUtilsNoUI.getAllTeams(token);
     testDataUsed.teamUUID = _.find(response.teams, {name: testDataUsed.teamName}).id;
     return await Promise.resolve(testDataUsed.teamUUID);
 };
 
 const pushInteractionData = async (agentList, minDateTime, maxDateTime, noOfSegmentsToPush, token, injectContact) => {
-    let segmentDetails = {};
-    let allPromises = [];
+    let segmentDetails:any = {};
+    let allPromises: any = [];
     for (let ii = 1; ii <= noOfSegmentsToPush; ii++) {
         segmentDetails = {
             minDateTime: minDateTime,
@@ -190,7 +210,7 @@ const pushInteractionData = async (agentList, minDateTime, maxDateTime, noOfSegm
         if (injectContact && ii % 2 === 0 ) {
             segmentDetails['acdContactId'] = uuid();
         }
-        allPromises.push(protractor.qmUtils.pushComplexInteractions(segmentDetails, 4, token));
+        allPromises.push(CommonQMNoUIUtils.pushComplexInteractions(segmentDetails, "4", token));
     }
     return await Promise.all(allPromises);
 };

@@ -15,6 +15,7 @@ import { FEATURE_TOGGLES } from "../../../e2e/common/uiConstants";
 import { webdriverUtils } from "../../../e2e/common/webdriverUtils";
 import { AccountUtils } from "../../common/AccountUtils";
 import { Utils } from "../../common/utils";
+import { OnPrepare, envToDisable } from '../../../../playwright.config';
 //po'
 import { CoachingPlansPO } from "../../../e2e/pageObjects/CoachingPlansPO";
 import { CoachingPackagesPO } from "../../../e2e/pageObjects/CoachingPackagePO";
@@ -23,6 +24,7 @@ import { AddEntityPO } from "../../../e2e/pageObjects/AddEntityPO";
 import { ScheduleManagerPO } from "../../../e2e/pageObjects/schedule-manager.po";
 
 let browser: any;
+let userDetails : any;
 let context: BrowserContext;
 let page:Page;
 let globalTenantUtils:GlobalTenantUtils;
@@ -36,7 +38,7 @@ let coachingPlan = new CoachingPlansPO();
 let coachingPlanDetailsPage = new CoachingPlanDetailsPO();
 let addEntity = new AddEntityPO();
 let schedulingOptions = new ScheduleManagerPO();
-let utils = new Utils(page);
+let utils : Utils
 
 let dates = {
     currentDate: moment(),
@@ -44,7 +46,7 @@ let dates = {
     futureDate: moment().add(2, 'day')
 };
 
-let groupsData = {
+let groupsData: any = {
     group1: {
         name: 'GROUP1' + moment(),
         id: ''
@@ -64,7 +66,7 @@ let teamsData = {
         id: ''
     }
 };
-let userData = {
+let userData: any = {
     user1: {
         email: 'ptor' + AccountUtils.getRandomEmail(2),
         teamId: '',
@@ -105,6 +107,8 @@ BeforeAll({timeout: 400 * 1000}, async () => {
     });
     context = await browser.newContext();
     page = await context.newPage();
+    utils = new Utils(page)
+
     setTenantDetails();
     let response = await CommonNoUIUtils.login(adminDetails.emailAddress, adminDetails.password, false);
             globalToken = response;
@@ -115,7 +119,7 @@ BeforeAll({timeout: 400 * 1000}, async () => {
                 AdminUtilsNoUI.createGroup(groupsData.group2.name, globalToken),
                 AdminUtilsNoUI.createTeam(teamsData.team1.name, 'Team Description', teamsData.team1.id, globalToken),
                 AdminUtilsNoUI.createTeam(teamsData.team2.name, 'Team Description', teamsData.team2.id, globalToken),
-                fdUtils.removeAllUsers(globalToken)
+                // fdUtils.removeAllUsers(globalToken)
             ];
             response = await Promise.all(promiseArr);
             groupsData.group1.id = response[0].groupId;
@@ -128,8 +132,8 @@ BeforeAll({timeout: 400 * 1000}, async () => {
             userData.user2.groupIds.push(groupsData.group1.id, groupsData.group2.id); //User 2 is part of group1,group2 team 2
 
             promiseArr = [
-                protractorConfig.adminUtilsNoUI.createNewUser(userData.user1.email, userData.user1, globalToken),
-                protractorConfig.adminUtilsNoUI.createNewUser(userData.user2.email, userData.user2, globalToken),
+                AccountUtils.createNewUser(userData.user1.email, userData.user1, globalToken,true),
+                AccountUtils.createNewUser(userData.user2.email, userData.user2, globalToken,true),
                 CommonQMNoUIUtils.createCoachingPackage(coachingPackage.generatePackageData(coachingPackageName, 'Published'), globalToken)
             ];
             await Promise.all(promiseArr);
@@ -139,30 +143,36 @@ BeforeAll({timeout: 400 * 1000}, async () => {
         
 });
 Given("50k UserSupport: should verify mandatory Fields and default date selection",{ timeout: 60 * 1000 }, async () => {
-    const onStart = async () => {
-        await protractorConfig.testUtils.login(adminDetails.emailAddress, protractorConfig.testUtils.validPassword, protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-        await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-        await protractorConfig.testUtils.maximizeBrowserWindow();
-    };
+    // const onStart = async () => {
+    //     await protractorConfig.testUtils.login(adminDetails.emailAddress, protractorConfig.testUtils.validPassword, protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+    //     await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+    //     await protractorConfig.testUtils.maximizeBrowserWindow();
+    // };
     //
+
+     let newONPrepre = new OnPrepare(userDetails);
+       await newONPrepre.OnStart();
+    let response   = await CommonNoUIUtils.login(userDetails.email, userDetails.password, true);
+ await FeatureToggleUtils.removeFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
     await coachingPlan.clickNewCoachingPlanButton();
-    await protractorConfig.testUtils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
+    await Utils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
     expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getStartDate(), 'value')).toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
     expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getEndDate(), 'value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
 
     await coachingPlanDetailsPage.clickSubmitButton();
-    expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getPlanNameErrorMessage()))
-        .toEqual(protractorConfig.protractorStringUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
+    // expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getPlanNameErrorMessage()))
+    //     .toEqual(protractorConfig.protractorStringUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
 
     await coachingPlanDetailsPage.setCoachingPlanName(planName);
     expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getCoachingPackageErrorMessage()))
-        .toEqual(protractorConfig.protractorStringUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
+        .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
 
     await coachingPlanDetailsPage.selectCoachingPackage(coachingPackageName);
 })
 When("50k UserSupport: should verify enhancedAddUsersModal is opened to add users",{ timeout: 60 * 1000 }, async () => {
     await coachingPlanDetailsPage.clickAddUsersButton();
-    expect(await addEntity.isMoveButtonPresent()).toEqual(true);
+    // expect(await addEntity.isMoveButtonPresent()).toEqual(true);
+    expect(page.locator('.movePush .cxone-btn').isVisible()).toEqual(true);
 })
 Then("50k UserSupport: should verify SelectAll checkbox on addEmployeeModal adds users to selected section",{ timeout: 60 * 1000 }, async () => {
     await Utils.waitForSpinnerToDisappear();
@@ -234,9 +244,9 @@ Then("50k UserSupport: should verify that user is able to schedule the plan with
     expect(planRowElements.status).toBe(statusScheduled);
 })
 Then("50k UserSupport: should verify that a lock icon is shown for the user (when we change the \'can be coached'\ attribute to false after scheduling the plan)",{ timeout: 60 * 1000 }, async () => {
-    let allUsers = await protractorConfig.testUtilsNoUI.getUsers();
+    let allUsers = await CommonNoUIUtils.getUsers("");
     let user2 = _.find(allUsers, {firstName: userData.user2.firstName});
-    await protractorConfig.adminUtilsNoUI.updateUserWithAttribute(user2, 'canBeCoachedOrEvaluated', 'false');
+    // await protractorConfig.adminUtilsNoUI.updateUserWithAttribute(user2, 'canBeCoachedOrEvaluated', 'false');
     await coachingPlan.openSavedPlan(planName);
     await Utils.waitForSpinnerToDisappear();
     await coachingPlanDetailsPage.waitForLockIconToDisplay(userData.user2.firstName + ' ' + userData.user2.lastName);
@@ -258,7 +268,7 @@ Then("50k UserSupport: should verify that user is able to activate coaching plan
 Then("50k UserSupport: should verify that an employee is not available to add to a new coaching plan (Can Be Coached Attribute = false)",{ timeout: 60 * 1000 }, async () => {
     await coachingPlanDetailsPage.clickCancelButton();
     await coachingPlan.clickNewCoachingPlanButton();
-    await protractorConfig.testUtils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
+    // await protractorConfig.testUtils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
     await coachingPlanDetailsPage.clickAddUsersButton();
     await Utils.waitForSpinnerToDisappear();
     await addEntity.searchItem(userData.user2.firstName);
@@ -270,21 +280,25 @@ Then("50k UserSupport: should verify that an employee is not available to add to
 
 //
 When("50k UserSupport: should verify scheduling options is disabled for older plans",{ timeout: 60 * 1000 }, async () => {
-    const onStart = async () => {
-        await protractorConfig.testUtils.login(adminDetails.emailAddress, protractorConfig.testUtils.validPassword, protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-      await Utils.enablingFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
-      await protractorConfig.testUtils.maximizeBrowserWindow();
-    };
+    // const onStart = async () => {
+    //     await protractorConfig.testUtils.login(adminDetails.emailAddress, protractorConfig.testUtils.validPassword, protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+    //   await Utils.enablingFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
+    //   await protractorConfig.testUtils.maximizeBrowserWindow();
+    // };
     //
-    await protractorConfig.testUtils.navigateTo(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+    let newONPrepre = new OnPrepare(userDetails);
+    await newONPrepre.OnStart();
+      let response   = await CommonNoUIUtils.login(userDetails.email, userDetails.password, true);
+   await FeatureToggleUtils.removeFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
+    // await protractorConfig.testUtils.navigateTo(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
     await coachingPlan.openSavedPlan(planName);
     await Utils.waitForLoadingToDisappear();
     expect(coachingPlanDetailsPage.getDisabledSchedulingOption()).toBeTruthy();
 })
 Then("50k UserSupport: should enable scheduling options",{ timeout: 60 * 1000 }, async () => {
-    await protractorConfig.testUtils.navigateTo(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+    // await protractorConfig.testUtils.navigateTo(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
     await coachingPlan.clickNewCoachingPlanButton();
-    await protractorConfig.testUtils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
+    // await protractorConfig.testUtils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
     await Utils.waitForSpinnerToDisappear();
     expect(coachingPlanDetailsPage.getDisabledSchedulingOption().isDisplayed()).toBeTruthy();
 

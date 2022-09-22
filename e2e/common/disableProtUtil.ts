@@ -14,7 +14,7 @@ export class DisableProtUtils {
         return false;
     }
 
-    async getEnvName() {
+    getEnvName(): string {
         let AUTH_APP_URL = "https://na1.dev.nice-incontact.com";
         return AUTH_APP_URL.split('.')[1];
     }

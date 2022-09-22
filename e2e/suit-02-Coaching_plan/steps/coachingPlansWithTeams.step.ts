@@ -13,6 +13,8 @@ import { CommonQMNoUIUtils } from "../../../e2e/common/CommonQMNoUIUtils";
 import { GlobalTenantUtils } from "../../../e2e/common/globalTenantUtils";
 import { FEATURE_TOGGLES } from "../../../e2e/common/uiConstants";
 import { webdriverUtils } from "../../../e2e/common/webdriverUtils";
+import { OnPrepare, envToDisable } from '../../../../playwright.config';
+
 //po'
 import { CoachingPlansPO } from "../../../e2e/pageObjects/CoachingPlansPO";
 import { CoachingPackagesPO } from "../../../e2e/pageObjects/CoachingPackagePO";
@@ -23,6 +25,7 @@ import { AccountUtils } from "../../common/AccountUtils";
 import { Utils } from "../../common/utils";
 
         let browser: any;
+        let userDetails : any;
         let context: BrowserContext;
         let page:Page;
         let globalTenantUtils:GlobalTenantUtils;
@@ -149,17 +152,21 @@ import { Utils } from "../../common/utils";
             console.log('DateTime formats to use', dateFormat);
         });
         Given("Should verify mandatory Fields and default date selection",{ timeout: 60 * 1000 }, async () => {
-            const onStart = async () => {
-                await protractorConfig.testUtils.login(adminDetails.emailAddress, protractorConfig.testUtils.validPassword, protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-                await removeFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
-                await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-                await protractorConfig.testUtils.maximizeBrowserWindow();
-            };
+             
+                 let newONPrepre = new OnPrepare(userDetails);
+                 await newONPrepre.OnStart();
+                   let response   = await CommonNoUIUtils.login(userDetails.email, userDetails.password, true);
+                await FeatureToggleUtils.removeFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
+                // await protractorConfig.testUtils.waitForPage(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+                // await protractorConfig.testUtils.maximizeBrowserWindow();
+        
             //
             await coachingPlan.clickNewCoachingPlanButton();
-                await Utils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
-                expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getStartDate(), 'value')).toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
-                expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getEndDate(), 'value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
+            await Utils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
+                // expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getStartDate(), 'value')).toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
+                expect(coachingPlanDetailsPage.getStartDate().getAttribute('value')).toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
+                // expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getEndDate(), 'value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
+                expect(coachingPlanDetailsPage.getEndDate().getAttribute('value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
 
                 await coachingPlanDetailsPage.clickSubmitButton();
                 expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getPlanNameErrorMessage()))
@@ -170,8 +177,8 @@ import { Utils } from "../../common/utils";
                     .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
 
                 await coachingPlanDetailsPage.selectCoachingPackage(coachingPackageName);
-                expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getAssignedEmployeesErrorMessage()))
-                    .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
+                expect(await page.locator(coachingPlanDetailsPage.getAssignedEmployeesErrorMessage()).textContent())
+                .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
            
         });
         When("Should verify Select All Link On Add Users Modal adds users to selected section",{ timeout: 60 * 1000 }, async () => {
@@ -224,9 +231,8 @@ import { Utils } from "../../common/utils";
         })
         Then("Should verify that Select all link select only filtered users under selected tab",{ timeout: 60 * 1000 }, async () => {
             await addEntity.selectAll();
-            expect(webdriverUtils.getElementText(addEntity.getTotalCount())).toEqual('0 total (viewing 0)');
-            expect(webdriverUtils.getElementText(addEntity.getTabLabel(0))).toEqual('SELECTED (1)');
-       //return await page.locator('.first-last-name').textContent();
+            expect(await page.locator(addEntity.getTotalCount()).textContent().toEqual('0 total (viewing 0)'));
+            expect(await page.locator(addEntity.getTabLabel(0)).textContent().toEqual('SELECTED (1)'));
         })
         Then("Should verify that remove all link removes all the users from selected tab and adds them to users grid",{ timeout: 60 * 1000 }, async () => {
             await addEntity.removeAllFromActiveTab();
@@ -238,8 +244,7 @@ import { Utils } from "../../common/utils";
             await addEntity.clearAll();
             count = await addEntity.rowCount();
             expect(count).toEqual(2);
-            expect(webdriverUtils.getElementText(addEntity.getTotalCount())).toEqual('2 total');
-        
+            expect(await page.locator(addEntity.getTotalCount()).textContent().toEqual('2 total'));
         })
         Then("Should verify that user is able to schedule the plan with selected information",{ timeout: 60 * 1000 }, async () => {
             await addEntity.selectAll();
