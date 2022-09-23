@@ -12,7 +12,6 @@ import { AdminUtilsNoUI } from "../../../e2e/common/AdminUtilsNoUI";
 import { CommonQMNoUIUtils } from "../../../e2e/common/CommonQMNoUIUtils";
 import { GlobalTenantUtils } from "../../../e2e/common/globalTenantUtils";
 import { FEATURE_TOGGLES } from "../../../e2e/common/uiConstants";
-import { webdriverUtils } from "../../../e2e/common/webdriverUtils";
 import { OnPrepare, envToDisable } from '../../../../playwright.config';
 
 //po'
@@ -39,6 +38,8 @@ import { Utils } from "../../common/utils";
         let coachingPlanDetailsPage = new CoachingPlanDetailsPO();
         let addEntity = new AddEntityPO();
         let schedulingOptions = new ScheduleManagerPO();
+        let utils :any
+        let accountUtils : any
 
         let dates = {
             currentDate: moment(),
@@ -115,6 +116,8 @@ import { Utils } from "../../common/utils";
             });
             context = await browser.newContext();
             page = await context.newPage();
+            utils = new Utils(page)
+            accountUtils = new AccountUtils
             setTenantDetails();
             let response = await CommonNoUIUtils.login(adminDetails.emailAddress, adminDetails.password, false);
             globalToken = response;
@@ -163,17 +166,15 @@ import { Utils } from "../../common/utils";
             //
             await coachingPlan.clickNewCoachingPlanButton();
             await Utils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
-                // expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getStartDate(), 'value')).toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
                 expect(coachingPlanDetailsPage.getStartDate().getAttribute('value')).toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
-                // expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getEndDate(), 'value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
                 expect(coachingPlanDetailsPage.getEndDate().getAttribute('value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
 
                 await coachingPlanDetailsPage.clickSubmitButton();
-                expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getPlanNameErrorMessage()))
+                expect(await page.locator(coachingPlanDetailsPage.getPlanNameErrorMessage()).textContent())
                     .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
 
                 await coachingPlanDetailsPage.setCoachingPlanName(planName);
-                expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getCoachingPackageErrorMessage()))
+                expect(await page.locator(coachingPlanDetailsPage.getCoachingPackageErrorMessage()).textContent())
                     .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
 
                 await coachingPlanDetailsPage.selectCoachingPackage(coachingPackageName);
@@ -258,9 +259,9 @@ import { Utils } from "../../common/utils";
        
         })
         Then("Should verify that a lock icon is shown for the user (when we change the \'can be coached'\ attribute to false after scheduling the plan)",{ timeout: 60 * 1000 }, async () => {
-            let allUsers = await protractorConfig.testUtilsNoUI.getUsers();
+            let allUsers = await accountUtils.getUsers();
             let user2 = _.find(allUsers, {firstName: userData.user2.firstName});
-            await protractorConfig.adminUtilsNoUI.updateUserWithAttribute(user2, 'canBeCoachedOrEvaluated', 'false');
+            // await protractorConfig.adminUtilsNoUI.updateUserWithAttribute(user2, 'canBeCoachedOrEvaluated', 'false');
             await coachingPlan.openSavedPlan(planName);
             await Utils.waitForSpinnerToDisappear();
             await coachingPlanDetailsPage.waitForLockIconToDisplay(userData.user2.firstName + ' ' + userData.user2.lastName);
@@ -294,19 +295,19 @@ import { Utils } from "../../common/utils";
         })
         //scenario-2 
         When("Should verify scheduling options is disabled for older plans",{ timeout: 60 * 1000 }, async () => {
-            const onStart = async () => {
-                await loginPage.login(adminDetails.emailAddress, protractorConfig.testUtils.validPassword, protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
-                await protractorConfig.testUtils.maximizeBrowserWindow();
-            };
-            //
-            await protractorConfig.testUtils.navigateTo(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+            
+            let newONPrepre = new OnPrepare(userDetails);
+            await newONPrepre.OnStart();
+              let response   = await CommonNoUIUtils.login(userDetails.email, userDetails.password, true);
+           await FeatureToggleUtils.removeFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
+            await utils.getPageIdentifierUrls('coaching.coachingPlans');
             await coachingPlan.openSavedPlan(planName);
             await fdUtils.waitForLoadingToDisappear(60000);
             expect(coachingPlanDetailsPage.getDisabledSchedulingOption()).toBeTruthy();
-       
         })
+        
         Then("Should enable scheduling options",{ timeout: 60 * 1000 }, async () => {
-            await protractorConfig.testUtils.navigateTo(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
+            // await protractorConfig.testUtils.navigateTo(protractorConfig.protractorStringUtils.getPageIdentifierUrls('coaching.coachingPlans'));
             await coachingPlan.clickNewCoachingPlanButton();
             await Utils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
             await fdUtils.waitForLoadingToDisappear(60000);

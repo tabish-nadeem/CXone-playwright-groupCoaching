@@ -156,15 +156,16 @@ Given("50k UserSupport: should verify mandatory Fields and default date selectio
  await FeatureToggleUtils.removeFeatureToggle(FEATURE_TOGGLES.ENHANCED_ADD_EMPLOYEE_MODAL_FT, adminDetails.orgName, globalToken);
     await coachingPlan.clickNewCoachingPlanButton();
     await Utils.waitUntilVisible(coachingPlanDetailsPage.getAddUsersButton());
-    expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getStartDate(), 'value')).toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
-    expect(webdriverUtils.getElementAttribute(coachingPlanDetailsPage.getEndDate(), 'value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
+    expect(coachingPlanDetailsPage.getStartDate().getAttribute('value'))
+    .toEqual(dates.currentDate.format(dateFormat.shortDateFormat));
+    expect(coachingPlanDetailsPage.getEndDate().getAttribute('value')).toEqual(dates.defaultPlanEndDate.format(dateFormat.shortDateFormat));
 
     await coachingPlanDetailsPage.clickSubmitButton();
-    // expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getPlanNameErrorMessage()))
-    //     .toEqual(protractorConfig.protractorStringUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
+    expect(await page.locator(coachingPlanDetailsPage.getPlanNameErrorMessage()).textContent())
+        .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
 
     await coachingPlanDetailsPage.setCoachingPlanName(planName);
-    expect(webdriverUtils.getElementText(coachingPlanDetailsPage.getCoachingPackageErrorMessage()))
+    expect(await page.locator(coachingPlanDetailsPage.getCoachingPackageErrorMessage()).textContent())
         .toEqual(fdUtils.getExpectedString('coachingPlanDetails.validationMsg.fieldRequired'));
 
     await coachingPlanDetailsPage.selectCoachingPackage(coachingPackageName);
